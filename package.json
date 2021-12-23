@@ -1,0 +1,48 @@
+{
+	"name": "sl-commands",
+	"version": "0.0.1",
+	"description": "A simple handler for discord.js v13.",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"latest": "tsc && npm publish --tag latest",
+		"beta": "tsc && npm publish --tag beta",
+		"test": "ts-node-dev test/index.ts --cls",
+		"tsc": "tsc -w"
+	},
+	"keywords": [
+		"discord",
+		"bot",
+		"context",
+		"command",
+		"event",
+		"handler",
+		"typescript",
+		"class"
+	],
+	"author": "bluey#0012",
+	"license": "ISC",
+	"dependencies": {
+		"chalk": "^4.1.2",
+		"discord.js": "^13.4.0-dev.1640217946.aa7c1b2",
+		"dotenv": "^10.0.0",
+		"glob": "^7.2.0",
+		"mongoose": "^6.1.2"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.2.0",
+		"@types/node": "^16.11.12",
+		"prettier": "^2.5.1",
+		"ts-node": "^10.4.0",
+		"ts-node-dev": "^1.1.8",
+		"typescript": "^4.5.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bluee-js/sl-commands.git"
+	},
+	"bugs": {
+		"url": "https://github.com/bluee-js/sl-commands/issues"
+	},
+	"homepage": "https://github.com/bluee-js/sl-commands#readme"
+}

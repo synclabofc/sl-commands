@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "esnext",
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"importHelpers": true,
+    "skipLibCheck": true,
+		"declaration": true,
+		"strict": true
+	},
+	"files": ["permissions.json"],
+	"exclude": ["./test"],
+	"include": ["./src"]
+}
