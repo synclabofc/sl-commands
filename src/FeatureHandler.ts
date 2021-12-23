@@ -1,10 +1,10 @@
 import { Client } from 'discord.js';
 import { existsSync } from 'fs';
-import BlueyCommands from '.';
+import SLCommands from '.';
 import { glob } from 'glob';
 
 class FeatureHandler {
-	constructor(handler: BlueyCommands, dir: string) {
+	constructor(handler: SLCommands, dir: string) {
 		if (!dir) return;
 
 		if (!existsSync(dir)) {
@@ -19,7 +19,7 @@ class FeatureHandler {
 		}
 	}
 
-	private load(handler: BlueyCommands, dir: string) {
+	private load(handler: SLCommands, dir: string) {
 		let { client } = handler;
 		dir += '/**/*{.ts,.js}';
 
@@ -28,7 +28,7 @@ class FeatureHandler {
 		for (let file of files) {
 			let feature: (
 				client: Client,
-				handler: BlueyCommands,
+				handler: SLCommands,
 				...args: any[]
 			) => any = require(file)?.default;
 

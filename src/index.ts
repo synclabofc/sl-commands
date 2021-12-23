@@ -13,7 +13,7 @@ import mongo, { getMongoConnection } from './mongo';
 
 const { log } = console;
 
-class BlueyCommands extends EventEmitter {
+class SLCommands extends EventEmitter {
 	private _featuresDir: string = '';
 	private _commandsDir: string = '';
 	private _eventsDir: string = '';
@@ -187,4 +187,4 @@ class BlueyCommands extends EventEmitter {
 }
 
 export { SLEmbed, Command, Event };
-export default BlueyCommands;
+export default SLCommands;

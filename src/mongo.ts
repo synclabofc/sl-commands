@@ -1,6 +1,6 @@
 import mongoose, { Connection } from 'mongoose';
 import Events from './enums/Events';
-import BlueyCommands from '.';
+import SLCommands from '.';
 
 const results: {
 	[name: number]: string;
@@ -12,7 +12,7 @@ const results: {
 };
 
 export default async (
-	handler: BlueyCommands,
+	handler: SLCommands,
 	mongoPath: string,
 	dbOptions = {}
 ) => {

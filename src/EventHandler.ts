@@ -1,12 +1,12 @@
 import { ClientEvents, Collection } from 'discord.js';
-import BlueyCommands, { Event } from '.';
+import SLCommands, { Event } from '.';
 import { existsSync } from 'fs';
 import { glob } from 'glob';
 
 class EventHandler {
 	private _events = new Collection<string, Event<keyof ClientEvents>>();
 
-	constructor(handler: BlueyCommands, dir: string) {
+	constructor(handler: SLCommands, dir: string) {
 		if (!dir) return;
 
 		if (!existsSync(dir)) {
@@ -21,7 +21,7 @@ class EventHandler {
 		}
 	}
 
-	private load(handler: BlueyCommands, dir: string) {
+	private load(handler: SLCommands, dir: string) {
 		let { client } = handler;
 		dir += '/**/*{.ts,.js}';
 

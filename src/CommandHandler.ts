@@ -1,4 +1,4 @@
-import BlueyCommands, { Command } from '.';
+import SLCommands, { Command } from '.';
 import HandlerUtils from './HandlerUtils';
 import { CommandType, SubType } from '../typings';
 import { Collection } from 'discord.js';
@@ -9,7 +9,7 @@ class CommandHandler {
 	private _subcommands = new Collection<string, Command>();
 	private _commands = new Collection<string, Command>();
 
-	constructor(handler: BlueyCommands, dir: string) {
+	constructor(handler: SLCommands, dir: string) {
 		if (!dir) return;
 
 		if (!existsSync(dir)) {
@@ -25,7 +25,7 @@ class CommandHandler {
 		}
 	}
 
-	private load(handler: BlueyCommands, dir: string) {
+	private load(handler: SLCommands, dir: string) {
 		dir += '/**/*{.ts,.js}';
 		let commandFiles = glob.sync(dir, { absolute: true });
 
@@ -56,7 +56,7 @@ class CommandHandler {
 		handler.client.once('ready', () => this.registerCommands(handler));
 	}
 
-	private async registerCommands(handler: BlueyCommands) {
+	private async registerCommands(handler: SLCommands) {
 		let register = [...this.commandsArray] as Exclude<CommandType, SubType>[];
 
 		let global = register.filter(c => !c.testOnly);

@@ -19,14 +19,14 @@ import {
 	PermString,
 } from '../typings';
 
-import BlueyCommands, { SLEmbed, Command } from '.';
+import SLCommands, { SLEmbed, Command } from '.';
 import perms from '../permissions.json';
 
 type ICollection = Collection<string, Command>;
 
 class HandlerUtils {
 	setUp(
-		handler: BlueyCommands,
+		handler: SLCommands,
 		commands: ICollection,
 		subcommands: ICollection
 	) {
