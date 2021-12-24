@@ -20,7 +20,6 @@ export class Command {
 	description?: string
 	type: ApplicationCommandType | 'SUBCOMMAND'
 
-	sub?: boolean
 	hasSub?: boolean
 	testOnly?: boolean
 	devsOnly?: boolean
@@ -68,7 +67,6 @@ export class Command {
 
 		if (type === 'SUBCOMMAND') {
 			obj = obj as SubType
-			this.sub = true
 			this.reference = obj.reference
 		}
 

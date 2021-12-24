@@ -12,6 +12,7 @@ import {
 	MessageContextMenuInteraction,
 	UserContextMenuInteraction,
 	CommandInteractionOptionResolver,
+	CommandInteractionOption,
 } from 'discord.js'
 
 import { ConnectOptions } from 'mongoose'
