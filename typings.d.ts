@@ -9,100 +9,106 @@ import {
 	Client,
 	Guild,
 	User,
-} from 'discord.js';
+	MessageContextMenuInteraction,
+	UserContextMenuInteraction,
+	CommandInteractionOptionResolver,
+} from 'discord.js'
 
-import { ConnectOptions } from 'mongoose';
-import BlueyCommands from './src';
+import { ConnectOptions } from 'mongoose'
+import BlueyCommands from './src'
 
 /* SYSTEM */
 
 export type HandlerOptions = {
-	featuresDir?: string;
-	commandsDir?: string;
-	eventsDir?: string;
-	botToken: string;
-	testServers?: string | string[];
-	botOwners?: string | string[];
-	dbOptions?: ConnectOptions;
-	showWarns?: boolean;
-	testOnly?: boolean;
-	mongoUri?: string;
-	log?: boolean;
-};
+	featuresDir?: string
+	commandsDir?: string
+	eventsDir?: string
+	botToken: string
+	testServers?: string | string[]
+	botOwners?: string | string[]
+	dbOptions?: ConnectOptions
+	showWarns?: boolean
+	testOnly?: boolean
+	mongoUri?: string
+	log?: boolean
+}
 
 /* UTILS */
 
-import permissions from './permissions.json';
+import permissions from './permissions.json'
 
-export type PermString = keyof typeof permissions;
+export type PermString = keyof typeof permissions
 
 type BaseInteraction = {
-	member: GuildMember;
+	member: GuildMember
 	guild: Guild & {
-		me: GuildMember;
-	};
-};
+		me: GuildMember
+	}
+}
 
 /* COMMANDS & CONTEXTS */
 
-export type EContextInteraction = BaseInteraction & ContextMenuInteraction;
-export type ECommandInteraction = BaseInteraction & CommandInteraction;
+export type ECommandInteraction = BaseInteraction & CommandInteraction
+export type EContextInteraction<T extends 'MESSAGE' | 'USER'> =
+	BaseInteraction &
+		(T extends 'USER'
+			? UserContextMenuInteraction
+			: MessageContextMenuInteraction)
 
-export type CommandType = ChatInputType | MessageType | UserType | SubType;
-export type Callback = ChatInputCallback | MessageCallback | UserCallback;
+export type CommandType = ChatInputType | MessageType | UserType | SubType
+export type Callback = ChatInputCallback | MessageCallback | UserCallback
 
 export type SubType = {
-	name: string;
-	type: 'SUBCOMMAND';
-	reference: string;
-	callback?: (obj: {
-		client: Client;
-		handler: BlueyCommands;
-		interaction: ECommandInteraction;
-		options?: (number | string | boolean)[];
-	}) => any;
-};
+	type: 'SUBCOMMAND'
+	name: string
+	reference: string
+	callback: (obj: {
+		client: Client
+		handler: BlueyCommands
+		interaction: ECommandInteraction
+		options?: CommandInteractionOptionResolver
+	}) => any
+}
 
 export type ChatInputType = {
-	type: 'CHAT_INPUT';
-	sub?: boolean;
+	type: 'CHAT_INPUT'
 	callback: (obj: {
-		client: Client;
-		handler: BlueyCommands;
-		interaction: ECommandInteraction;
-		options?: (number | string | boolean)[];
-	}) => any;
+		client: Client
+		handler: BlueyCommands
+		interaction: ECommandInteraction
+		options?: CommandInteractionOptionResolver
+	}) => any
 } & BaseType &
-	ChatInputApplicationCommandData;
+	ChatInputApplicationCommandData
 
 export type MessageType = {
-	type: 'MESSAGE';
+	type: 'MESSAGE'
 	callback: (obj: {
-		client: Client;
-		target: Message;
-		handler: BlueyCommands;
-		interaction: EContextInteraction;
-	}) => any;
+		client: Client
+		target: Message
+		handler: BlueyCommands
+		interaction: EContextInteraction<'MESSAGE'>
+	}) => any
 } & BaseType &
-	MessageApplicationCommandData;
+	MessageApplicationCommandData
 
 export type UserType = {
-	type: 'USER';
+	type: 'USER'
 	callback: (obj: {
-		target: User;
-		client: Client;
-		handler: BlueyCommands;
-		interaction: EContextInteraction;
-	}) => any;
+		target: User
+		client: Client
+		handler: BlueyCommands
+		interaction: EContextInteraction<'USER'>
+	}) => any
 } & BaseType &
-	UserApplicationCommandData;
+	UserApplicationCommandData
 
-type BaseType = {
-	permissions?: PermString | PermString[];
-	testOnly?: boolean;
-	devsOnly?: boolean;
-};
+interface BaseType {
+	permissions?: PermString | PermString[]
+	testOnly?: boolean
+	devsOnly?: boolean
+}
 
-export type ChatInputCallback = ChatInputType['callback'];
-export type MessageCallback = MessageType['callback'];
-export type UserCallback = UserType['callback'];
+export type ChatInputCallback = ChatInputType['callback']
+export type MessageCallback = MessageType['callback']
+export type UserCallback = UserType['callback']

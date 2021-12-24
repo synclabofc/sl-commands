@@ -1,14 +1,13 @@
 import {
-	CommandInteractionOption,
+	CommandInteractionOptionResolver,
+	MessageContextMenuInteraction,
+	UserContextMenuInteraction,
 	InteractionReplyOptions,
-	ContextMenuInteraction,
 	GuildMember,
 	Collection,
 	Message,
 	Guild,
-	User,
-	Client,
-} from 'discord.js';
+} from 'discord.js'
 
 import {
 	ECommandInteraction,
@@ -17,178 +16,154 @@ import {
 	MessageCallback,
 	UserCallback,
 	PermString,
-} from '../typings';
+	SubType,
+} from '../typings'
 
-import SLCommands, { SLEmbed, Command } from '.';
-import perms from '../permissions.json';
+import SLCommands, { SLEmbed, Command } from '.'
+import perms from '../permissions.json'
 
-type ICollection = Collection<string, Command>;
+type ICollection = Collection<string, Command>
 
 class HandlerUtils {
-	setUp(
-		handler: SLCommands,
-		commands: ICollection,
-		subcommands: ICollection
-	) {
-		let { client, botOwners } = handler;
+	setUp(handler: SLCommands, commands: ICollection, subcommands: ICollection) {
+		let { client, botOwners } = handler
 
-		client.on('interactionCreate', async int => {
-			if (!int.isCommand() && !int.isContextMenu()) return;
+		client.on('interactionCreate', async inter => {
+			if (!inter.isCommand() && !inter.isContextMenu()) return
 
-			let command = commands.get(int.commandName);
-			if (!command) return;
+			let command = commands.get(inter.commandName)
+			if (!command) return
 
-			let { permissions, devsOnly, callback, type, hasSub } = command;
-			let { member, guild } = int;
-			let args;
+			let int: ECommandInteraction | EContextInteraction<'MESSAGE' | 'USER'>
+			let { permissions, devsOnly, callback, type, hasSub } = command
 
-			member = member as GuildMember;
-			guild = guild as Guild;
+			if (type === 'CHAT_INPUT') int = inter as ECommandInteraction
+			else if (type === 'USER') int = inter as EContextInteraction<'USER'>
+			else int = inter as EContextInteraction<'MESSAGE'>
+
+			let { member, guild } = int
 
 			let verified = this.verify(
-				permissions || [],
+				permissions,
 				botOwners,
+				devsOnly,
 				member,
-				devsOnly || false,
 				guild
-			);
+			)
 
 			if (verified) {
-				int.reply(verified);
-				return;
+				int.reply(verified)
+				return
 			}
 
 			if (type == 'CHAT_INPUT') {
-				if (!int.isCommand()) return;
-				args = getArgs(int.options.data);
+				if (!int.isCommand()) return
 
-				let subName = args[0] as string;
-				let subcommand = subcommands.find(
-					({ name, reference }) =>
-						name === subName && reference === int.commandName
-				);
-				if (hasSub && subcommand) {
-					callback = subcommand.callback as ChatInputCallback;
-					args.shift();
+				let subName = int.options.getSubcommand()
+				let subCommand = subcommands.find(
+					s => s.name === subName && s.reference === int.commandName
+				)
+
+				if (hasSub && subCommand) {
+					let { callback } = subCommand as SubType
 
 					await callback({
-						options: args as (string | number | boolean)[],
-						interaction: int as ECommandInteraction,
-						handler: handler,
+						options: int.options as OptRsvlr,
+						interaction: int,
+						handler,
 						client,
-					});
-					return;
+					})
+					return
 				}
-			} else {
-				if (!int.isContextMenu()) return;
-				args = await getTarget(client, int);
-			}
+			} else if (!int.isContextMenu()) return
 
 			try {
 				if (type === 'CHAT_INPUT') {
-					callback = callback as ChatInputCallback;
+					callback = callback as ChatInputCallback
 					await callback({
-						options: args as (string | number | boolean)[],
+						options: int.options as CommandInteractionOptionResolver,
 						interaction: int as ECommandInteraction,
-						handler: handler,
+						handler,
 						client,
-					});
-				} else {
-					callback = callback as MessageCallback | UserCallback;
+					})
+				} else if (type === 'MESSAGE') {
+					callback = callback as MessageCallback
 					await callback({
-						interaction: int as EContextInteraction,
-						target: args as Message & User,
-						handler: handler,
+						target: (int as MessageContextMenuInteraction)
+							.targetMessage as Message,
+						interaction: int as EContextInteraction<'MESSAGE'>,
+						handler,
 						client,
-					});
+					})
+				} else {
+					callback = callback as UserCallback
+					await callback({
+						target: (int as UserContextMenuInteraction).targetUser,
+						interaction: int as EContextInteraction<'USER'>,
+						handler,
+						client,
+					})
 				}
 			} catch (e) {
-				handler.logger.error(`Error at ${int.commandName}:\n`, e);
+				handler.logger.error(`Error at ${int.commandName}:\n`, e)
 				setTimeout(() => {
 					int[int.replied ? 'followUp' : 'reply']({
-						embeds: [
-							new SLEmbed().setError(`Ocorreu um erro inesperado.`),
-						],
-					});
-				}, 500);
+						embeds: [new SLEmbed().setError(`Ocorreu um erro inesperado.`)],
+					})
+				}, 500)
 			}
-		});
+		})
 	}
 
 	verify(
-		reqPerms: PermString[],
-		botOwners: string[],
+		reqPerms: PermString[] = [],
+		botOwners: string[] = [],
+		devsOnly: boolean = false,
 		target: GuildMember,
-		devsOnly: boolean,
 		guild: Guild
 	): InteractionReplyOptions | null {
 		if (devsOnly && !botOwners.includes(target.id)) {
 			return {
 				content: 'Este comando está reservado para os meus desenvolvedores.',
 				ephemeral: true,
-			};
+			}
 		}
 
 		if (reqPerms.length) {
-			let missMe = missing(guild.me!, reqPerms);
-			let missIt = missing(target, reqPerms);
-			let str;
+			let missMe = missing(guild.me!, reqPerms)
+			let missIt = missing(target, reqPerms)
+			let str
 
 			if (missIt.length) {
-				str = strs(missIt);
+				str = strs(missIt)
 
 				return {
 					content: `Você precisa da${str.s} permiss${str.a} ${str} para utilizar este comando.`,
 					ephemeral: true,
-				};
+				}
 			}
 
 			if (missMe.length) {
-				str = strs(missMe);
+				str = strs(missMe)
 
 				return {
 					content: `Eu preciso da${str.s} permiss${str.a} ${str} para executar este comando.`,
 					ephemeral: true,
-				};
+				}
 			}
 		}
 
-		return null;
+		return null
 	}
-}
-
-async function getTarget(
-	client: Client,
-	{ targetType, targetId, channel }: ContextMenuInteraction
-) {
-	let target;
-
-	if (targetType == 'MESSAGE') target = await channel?.messages.fetch(targetId);
-	else target = await client?.users.fetch(targetId);
-
-	return target ?? targetId;
-}
-
-function getArgs(data: readonly CommandInteractionOption[]) {
-	let args = [];
-	for (let option of data) {
-		if (option.type === 'SUB_COMMAND') {
-			if (option.name) args.push(option.name);
-			option.options?.forEach(x => {
-				if (x.value) args.push(x.value);
-			});
-		} else if (option.value) args.push(option.value);
-	}
-	return args;
 }
 
 function missing(target: GuildMember, required: PermString[]) {
 	let miss = target.permissions
 		.missing(required, true)
-		.map(e => perms[e as PermString]);
+		.map(e => perms[e as PermString])
 
-	if (miss.includes('Administrador')) return ['Administrador'];
-	return miss;
+	if (miss.includes('Administrador')) return ['Administrador']
+	return miss
 }
 
 function strs(array: string[]) {
@@ -196,7 +171,9 @@ function strs(array: string[]) {
 		s: array.length > 1 ? 's' : '',
 		a: array.length > 1 ? 'ões' : 'ão',
 		toString: () => `\`${array.join(', ')}\``,
-	};
+	}
 }
 
-export = HandlerUtils;
+type OptRsvlr = CommandInteractionOptionResolver
+
+export = HandlerUtils

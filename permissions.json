@@ -15,7 +15,7 @@
 	"SEND_TTS_MESSAGES":          "Enviar mensagens em Texto-para-voz",
 	"MENTION_EVERYONE":           "Mencionar @everyone, @here e todos os cargos",
 	"MANAGE_NICKNAMES":           "Gerenciar apelidos",
-	"MODERATE_MEMBERS":           "Moderar membros",
+	"MODERATE_MEMBERS":           "Membros de castigo",
 	"PRIORITY_SPEAKER":           "Voz prioritária",
 	"MANAGE_MESSAGES":            "Gerenciar mensagens",
 	"MANAGE_WEBHOOKS":            "Gerenciar webhooks",

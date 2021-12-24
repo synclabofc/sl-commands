@@ -3,4 +3,4 @@ enum Events {
 	COMMAND_EXCEPTION = 'commandException',
 }
 
-export default Events;
+export default Events

@@ -1,5 +1,5 @@
-import { Client, ClientEvents } from 'discord.js';
-import BlueyCommands from '..';
+import { Client, ClientEvents } from 'discord.js'
+import BlueyCommands from '..'
 
 export class Event<K extends keyof ClientEvents> {
 	constructor(
@@ -13,7 +13,7 @@ export class Event<K extends keyof ClientEvents> {
 		if (!name || !callback) {
 			throw new TypeError(
 				'[EVENTS] You must provide name and callback for every event.'
-			);
+			)
 		}
 	}
 }

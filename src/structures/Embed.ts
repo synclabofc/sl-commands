@@ -1,40 +1,40 @@
-import { MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { MessageEmbed, MessageEmbedOptions } from 'discord.js'
 
 const icons = {
 	loading: 'https://cdn.discordapp.com/emojis/906376863880998973.gif',
 	success: 'https://cdn.discordapp.com/emojis/777567150180270111.png',
 	error: 'https://cdn.discordapp.com/emojis/845705106674155561.png',
 	arrow: 'https://cdn.discordapp.com/emojis/851206127471034378.png',
-};
+}
 
 export class SLEmbed extends MessageEmbed {
 	constructor(options?: MessageEmbedOptions) {
-		super(options);
+		super(options)
 
-		this.setColor('#2F3136');
+		this.setColor('#2F3136')
 	}
 
 	setSuccess(name: string, footer?: string): this {
-		this.setAuthor({ name, iconURL: icons.success });
+		this.setAuthor({ name, iconURL: icons.success })
 
-		if (footer) this.setFooter(footer, icons.arrow);
+		if (footer) this.setFooter(footer, icons.arrow)
 
-		return this;
+		return this
 	}
 
 	setLoading(name: string, footer?: string): this {
-		this.setAuthor({ name, iconURL: icons.loading });
+		this.setAuthor({ name, iconURL: icons.loading })
 
-		if (footer) this.setFooter(footer, icons.arrow);
+		if (footer) this.setFooter(footer, icons.arrow)
 
-		return this;
+		return this
 	}
 
 	setError(name: string, footer?: string): this {
-		this.setAuthor({ name, iconURL: icons.error });
+		this.setAuthor({ name, iconURL: icons.error })
 
-		if (footer) this.setFooter(footer);
+		if (footer) this.setFooter(footer)
 
-		return this;
+		return this
 	}
 }

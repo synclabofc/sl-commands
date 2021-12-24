@@ -13,9 +13,9 @@ SLCommands is a command, context, and event handler made by **bluey#0012**. The 
 
 # **Documentation**
 
-The official documentation can be found here: https://docs.sl-commands.com
+The official documentation can be found here: https://synclab.gitbook.io/slcommands/
 
-# **Instalation**
+# **Installation**
 
 ```bash
 npm install sl-commands
