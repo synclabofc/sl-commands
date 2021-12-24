@@ -58,8 +58,14 @@ class HandlerUtils {
 
 			if (type == 'CHAT_INPUT') {
 				if (!int.isCommand()) return
+				let subName: string;
 
-				let subName = int.options.getSubcommand()
+				try {
+					subName = int.options.getSubcommand();
+				} catch {
+					null
+				}
+
 				let subCommand = subcommands.find(
 					s => s.name === subName && s.reference === int.commandName
 				)
