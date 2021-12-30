@@ -17,7 +17,7 @@ export class SLEmbed extends MessageEmbed {
 	setSuccess(name: string, footer?: string): this {
 		this.setAuthor({ name, iconURL: icons.success })
 
-		if (footer) this.setFooter(footer, icons.arrow)
+		if (footer) this.setFooter({ text: footer, iconURL: icons.arrow })
 
 		return this
 	}
@@ -25,7 +25,7 @@ export class SLEmbed extends MessageEmbed {
 	setLoading(name: string, footer?: string): this {
 		this.setAuthor({ name, iconURL: icons.loading })
 
-		if (footer) this.setFooter(footer, icons.arrow)
+		if (footer) this.setFooter({ text: footer, iconURL: icons.arrow })
 
 		return this
 	}
@@ -33,7 +33,7 @@ export class SLEmbed extends MessageEmbed {
 	setError(name: string, footer?: string): this {
 		this.setAuthor({ name, iconURL: icons.error })
 
-		if (footer) this.setFooter(footer)
+		if (footer) this.setFooter({ text: footer, iconURL: icons.arrow })
 
 		return this
 	}

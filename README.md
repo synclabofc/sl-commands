@@ -22,9 +22,9 @@ npm install sl-commands
 ```
 
 ```bash
-npm install discord.js@dev
+npm install discord.js
 ```
-_required discord.js@dev version_
+_required discord.js v13.5.0 version_
 
 # **Support & Feature Requests**
 
