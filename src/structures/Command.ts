@@ -3,17 +3,16 @@ import {
 	ApplicationCommandType,
 } from 'discord.js'
 
+import perms from '../../permissions.json'
 import {
+	Callback,
 	ChatInputType,
 	CommandType,
 	MessageType,
 	PermString,
-	Callback,
-	UserType,
 	SubType,
+	UserType,
 } from '../../typings'
-
-import perms from '../../permissions.json'
 
 export class Command {
 	name: string

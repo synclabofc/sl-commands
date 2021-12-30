@@ -1,7 +1,8 @@
-import { Client } from 'discord.js'
-import { existsSync } from 'fs'
-import SLCommands from '.'
-import { glob } from 'glob'
+import { Client } from 'discord.js';
+import { existsSync } from 'fs';
+import { glob } from 'glob';
+
+import SLCommands from '.';
 
 class FeatureHandler {
 	constructor(handler: SLCommands, dir: string) {

@@ -1,7 +1,8 @@
-import { ClientEvents, Collection } from 'discord.js'
-import SLCommands, { Event } from '.'
-import { existsSync } from 'fs'
-import { glob } from 'glob'
+import { ClientEvents, Collection } from 'discord.js';
+import { existsSync } from 'fs';
+import { glob } from 'glob';
+
+import SLCommands, { Event } from '.';
 
 class EventHandler {
 	private _events = new Collection<string, Event<keyof ClientEvents>>()

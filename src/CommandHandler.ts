@@ -1,9 +1,10 @@
-import SLCommands, { Command } from '.'
-import HandlerUtils from './HandlerUtils'
-import { CommandType, SubType } from '../typings'
-import { Collection } from 'discord.js'
-import { existsSync } from 'fs'
-import { glob } from 'glob'
+import { Collection } from 'discord.js';
+import { existsSync } from 'fs';
+import { glob } from 'glob';
+
+import SLCommands, { Command } from '.';
+import { CommandType, SubType } from '../typings';
+import HandlerUtils from './HandlerUtils';
 
 class CommandHandler {
 	private _subcommands = new Collection<string, Command>()
