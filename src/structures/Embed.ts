@@ -2,7 +2,7 @@ import { MessageEmbed, MessageEmbedOptions } from 'discord.js'
 
 const icons = {
 	loading: 'https://cdn.discordapp.com/emojis/906376863880998973.gif',
-	success: 'https://cdn.discordapp.com/emojis/777567150180270111.png',
+	success: 'https://cdn.discordapp.com/emojis/843197955532128296.png',
 	error: 'https://cdn.discordapp.com/emojis/845705106674155561.png',
 	arrow: 'https://cdn.discordapp.com/emojis/851206127471034378.png',
 }

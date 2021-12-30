@@ -77,7 +77,7 @@ class CommandHandler {
 		return this._subcommands
 	}
 
-	public get commandsArray(): Command[] {
+	public get commandsArray() {
 		return Array.from(this._commands.values())
 	}
 
