@@ -31,7 +31,6 @@ export type HandlerOptions = {
 	showWarns?: boolean
 	testOnly?: boolean
 	mongoUri?: string
-	log?: boolean
 }
 
 /* UTILS */

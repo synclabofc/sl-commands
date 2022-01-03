@@ -1,10 +1,10 @@
-import { Collection } from 'discord.js';
-import { existsSync } from 'fs';
-import { glob } from 'glob';
+import { Collection } from 'discord.js'
+import { existsSync } from 'fs'
+import { glob } from 'glob'
 
-import SLCommands, { Command } from '.';
-import { CommandType, SubType } from '../typings';
-import HandlerUtils from './HandlerUtils';
+import SLCommands, { Command } from '.'
+import { CommandType, SubType } from '../typings'
+import HandlerUtils from './HandlerUtils'
 
 class CommandHandler {
 	private _subcommands = new Collection<string, Command>()
@@ -45,14 +45,12 @@ class CommandHandler {
 			}
 		}
 
-		if (handler.log) {
-			handler.logger.tag(
-				'COMMANDS',
-				`Loaded ${
-					this.commandsArray.length + this.subcommandsArray.length
-				} commands.`
-			)
-		}
+		handler.logger.tag(
+			'COMMANDS',
+			`Loaded ${
+				this.commandsArray.length + this.subcommandsArray.length
+			} commands.`
+		)
 
 		handler.client.once('ready', () => this.registerCommands(handler))
 	}
@@ -70,18 +68,22 @@ class CommandHandler {
 		}
 	}
 
+	/** @returns The commands collection */
 	public get commands() {
 		return this._commands
 	}
 
+	/** @returns The subcommands collection */
 	public get subcommands() {
 		return this._subcommands
 	}
 
+	/** @returns The commands array */
 	public get commandsArray() {
 		return Array.from(this._commands.values())
 	}
 
+	/** @returns The subcommands array */
 	public get subcommandsArray() {
 		return Array.from(this._subcommands.values())
 	}

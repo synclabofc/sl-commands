@@ -1,8 +1,8 @@
-import { ClientEvents, Collection } from 'discord.js';
-import { existsSync } from 'fs';
-import { glob } from 'glob';
+import { ClientEvents, Collection } from 'discord.js'
+import { existsSync } from 'fs'
+import { glob } from 'glob'
 
-import SLCommands, { Event } from '.';
+import SLCommands, { Event } from '.'
 
 class EventHandler {
 	private _events = new Collection<string, Event<keyof ClientEvents>>()
@@ -37,15 +37,15 @@ class EventHandler {
 			handler.client.on(event.name, event.callback.bind(null, client, handler))
 		}
 
-		if (handler.log) {
-			handler.logger.tag('EVENTS', `Loaded ${this.eventsArray.length} events.`)
-		}
+		handler.logger.tag('EVENTS', `Loaded ${this.eventsArray.length} events.`)
 	}
 
+	/** @returns The events collection */
 	public get events() {
 		return this._events
 	}
 
+	/** @returns The events array */
 	public get eventsArray() {
 		return Array.from(this._events.values())
 	}
