@@ -40,7 +40,7 @@ export interface HandlerOptions {
 	mongoUri?: string
 }
 
-export class SLCommands extends EventEmitter {
+export default class SLCommands extends EventEmitter {
 	private _client: Client
 	private _token: string
 	private _eventsDir: string
