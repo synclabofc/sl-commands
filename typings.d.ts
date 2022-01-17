@@ -17,11 +17,10 @@ import {
 	GuildMember,
 	Client,
 	User,
+	Collection,
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
-import CommandHandler from './src/CommandHandler';
-import EventHandler from './src/EventHandler';
 import permissions from './permissions.json'
 import { EventEmitter } from 'events'
 import SLCommands from './src'
@@ -53,10 +52,10 @@ export default class SLCommands extends EventEmitter {
 	private _eventsDir: string
 	private _commandsDir: string
 	private _featuresDir: string
+	private _testOnly: boolean
+	private _showWarns: boolean
 	private _botOwners: string[]
 	private _testServers: string[]
-	private _showWarns: boolean
-	private _testOnly: boolean
 	private _mongoConnection: Connection | null
 	private _commandHandler: CommandHandler | null
 	private _eventHandler: EventHandler | null
@@ -102,11 +101,6 @@ export default class SLCommands extends EventEmitter {
 		...args: HandlerEvents[K]
 	): boolean
 
-	public off<K extends keyof HandlerEvents>(
-		event: K,
-		listener: (...args: HandlerEvents[K]) => Awaitable<void>
-	): this
-
 	public removeAllListeners<K extends keyof HandlerEvents>(event?: K): this
 }
 
@@ -142,6 +136,30 @@ export class SLEmbed extends MessageEmbed {
 	setSuccess(name: string, footer?: string): this
 	setLoading(name: string, footer?: string): this
 	setError(name: string, footer?: string): this
+}
+
+class CommandHandler {
+	private _subcommands = new Collection<string, Command>()
+	private _commands = new Collection<string, Command>()
+
+	constructor(handler: SLCommands, dir: string)
+	private load(handler: SLCommands, dir: string)
+	private async registerCommands(handler: SLCommands)
+
+	public get commandsArray(): Command[]
+	public get subcommandsArray(): Command[]
+	public get commands(): Collection<string, Command>
+	public get subcommands(): Collection<string, Command>
+}
+
+class EventHandler {
+	private _events = new Collection<string, Event<keyof ClientEvents>>()
+
+	constructor(handler: SLCommands, dir: string)
+	private load(handler: SLCommands, dir: string)
+
+	public get eventsArray(): Event<keyof ClientEvents>[]
+	public get events(): Collection<string, Event<keyof ClientEvents>>
 }
 
 /* UTILS */

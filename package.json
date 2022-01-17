@@ -5,9 +5,9 @@
 	"main": "dist/index.js",
 	"types": "typings.d.ts",
 	"scripts": {
-		"latest": "tsc && npm publish --tag latest",
-		"beta": "tsc && npm publish --tag beta",
-		"test": "ts-node-dev test/index.ts --cls",
+		"latest": "npm version patch && tsc && npm publish --tag latest && git push",
+		"beta": "npm version patch && tsc && npm publish --tag beta && git push",
+		"test": "cls && ts-node-dev test/index.ts",
 		"tsc": "tsc -w"
 	},
 	"keywords": [
