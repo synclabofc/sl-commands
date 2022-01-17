@@ -12,7 +12,7 @@ export class Event<K extends keyof ClientEvents> {
 	) {
 		if (!name || !callback) {
 			throw new TypeError(
-				'[EVENTS] You must provide name and callback for every event.'
+				'SLCommands > You must provide name and callback for every event.'
 			)
 		}
 	}

@@ -47,7 +47,7 @@ export class Command {
 			for (let perm of this.permissions) {
 				if (!perms[perm]) {
 					throw new TypeError(
-						`[COMMANDS] The provived permissions for ${name} are invalid.`
+						`SLCommands > The provived permissions for ${name} command are invalid.`
 					)
 				}
 			}
@@ -80,7 +80,7 @@ export class Command {
 
 		if (!callback || !type) {
 			throw new TypeError(
-				`[COMMANDS] Callback or type missing at command ${name || 'unknown'}.`
+				`SLCommands > Callback or type missing at ${name || 'unknown'} command.`
 			)
 		}
 

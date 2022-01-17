@@ -20,6 +20,8 @@ import {
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
+import CommandHandler from './src/CommandHandler';
+import EventHandler from './src/EventHandler';
 import permissions from './permissions.json'
 import { EventEmitter } from 'events'
 import SLCommands from './src'
