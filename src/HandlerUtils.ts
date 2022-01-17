@@ -20,7 +20,7 @@ import {
 } from '../typings'
 
 import SLCommands, { SLEmbed, Command } from '.'
-import perms from '../permissions.json'
+import perms from './permissions.json'
 
 type ICollection = Collection<string, Command>
 

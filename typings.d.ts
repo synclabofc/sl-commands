@@ -16,9 +16,8 @@ import {
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
-import permissions from './permissions.json'
+import BlueyCommands, { permissions } from './src'
 import { EventEmitter } from 'events'
-import BlueyCommands from './src'
 import { Chalk } from 'chalk'
 
 /* SYSTEM */
@@ -100,7 +99,7 @@ export class SLCommands extends EventEmitter {
 		event: K,
 		listener: (...args: HandlerEvents[K]) => Awaitable<void>
 	): this
-	
+
 	public removeAllListeners<K extends keyof HandlerEvents>(event?: K): this
 }
 

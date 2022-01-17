@@ -3,7 +3,7 @@ import {
 	ApplicationCommandType,
 } from 'discord.js'
 
-import perms from '../../permissions.json'
+import perms from '../permissions.json'
 import {
 	Callback,
 	ChatInputType,
