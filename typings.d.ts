@@ -1,22 +1,22 @@
 import {
+	Guild,
+	Message,
+	CommandInteraction,
+	CommandInteractionOption,
+	MessageContextMenuInteraction,
+	MessageApplicationCommandData,
 	CommandInteractionOptionResolver,
 	ChatInputApplicationCommandData,
-	MessageApplicationCommandData,
-	MessageContextMenuInteraction,
 	UserContextMenuInteraction,
 	UserApplicationCommandData,
-	CommandInteractionOption,
 	ContextMenuInteraction,
-	CommandInteraction,
 	GuildMember,
-	Message,
 	Client,
-	Guild,
 	User,
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
-import BlueyCommands, { permissions } from './src'
+import SLCommands, { permissions } from './src'
 import { EventEmitter } from 'events'
 import { Chalk } from 'chalk'
 
@@ -106,9 +106,9 @@ export default class SLCommands extends EventEmitter {
 /* UTILS */
 
 export type PermString = keyof typeof permissions
-export type Awaitable<T> = T | PromiseLike<T>
+type Awaitable<T> = T | PromiseLike<T>
 
-type BaseInteraction = {
+interface BaseInteraction {
 	member: GuildMember
 	guild: Guild & {
 		me: GuildMember
@@ -133,7 +133,7 @@ export type SubType = {
 	reference: string
 	callback: (obj: {
 		client: Client
-		handler: BlueyCommands
+		handler: SLCommands
 		interaction: ECommandInteraction
 		options?: CommandInteractionOptionResolver
 	}) => any
@@ -143,7 +143,7 @@ export type ChatInputType = {
 	type: 'CHAT_INPUT'
 	callback: (obj: {
 		client: Client
-		handler: BlueyCommands
+		handler: SLCommands
 		interaction: ECommandInteraction
 		options?: CommandInteractionOptionResolver
 	}) => any
@@ -155,7 +155,7 @@ export type MessageType = {
 	callback: (obj: {
 		client: Client
 		target: Message
-		handler: BlueyCommands
+		handler: SLCommands
 		interaction: EContextInteraction<'MESSAGE'>
 	}) => any
 } & BaseType &
@@ -166,7 +166,7 @@ export type UserType = {
 	callback: (obj: {
 		target: User
 		client: Client
-		handler: BlueyCommands
+		handler: SLCommands
 		interaction: EContextInteraction<'USER'>
 	}) => any
 } & BaseType &

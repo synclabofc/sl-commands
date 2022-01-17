@@ -3,7 +3,7 @@
 	"version": "1.2.3",
 	"description": "A simple handler for discord.js v13.",
 	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"types": "typings.d.ts",
 	"scripts": {
 		"latest": "tsc && npm publish --tag latest",
 		"beta": "tsc && npm publish --tag beta",
