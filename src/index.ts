@@ -1,6 +1,5 @@
 import { SLEmbed, Command, Event } from './structures'
 import { mongo, getMongoConnection } from './mongo'
-import permissions from './permissions.json'
 import { HandlerOptions } from '../typings'
 import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
@@ -236,5 +235,5 @@ class SLCommands extends EventEmitter {
 	}
 }
 
-export { SLEmbed, Command, Event, permissions }
+export { SLEmbed, Command, Event }
 export default SLCommands

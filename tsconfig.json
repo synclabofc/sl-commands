@@ -3,14 +3,13 @@
 		"module": "commonjs",
 		"target": "esnext",
 		"outDir": "./dist",
-		"rootDir": "./src",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"importHelpers": true,
-    "skipLibCheck": true,
+		"skipLibCheck": true,
 		"declaration": true,
 		"strict": true
 	},
-	"exclude": ["./test"],
-	"include": ["./src"]
+	"include": ["src"],
+	"exclude": ["test"]
 }

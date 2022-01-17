@@ -1,13 +1,12 @@
 import { Client, ClientEvents } from 'discord.js'
-
-import BlueyCommands from '..'
+import SLCommands from '..'
 
 export class Event<K extends keyof ClientEvents> {
 	constructor(
 		public name: K,
 		public callback: (
 			client: Client,
-			handler: BlueyCommands,
+			handler: SLCommands,
 			...args: ClientEvents[K]
 		) => any
 	) {

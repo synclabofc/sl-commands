@@ -1,7 +1,9 @@
 import {
 	Guild,
 	Message,
+	MessageEmbed,
 	CommandInteraction,
+	ContextMenuInteraction,
 	CommandInteractionOption,
 	MessageContextMenuInteraction,
 	MessageApplicationCommandData,
@@ -9,18 +11,21 @@ import {
 	ChatInputApplicationCommandData,
 	UserContextMenuInteraction,
 	UserApplicationCommandData,
-	ContextMenuInteraction,
+	ApplicationCommandType,
+	MessageEmbedOptions,
+	ClientEvents,
 	GuildMember,
 	Client,
 	User,
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
-import SLCommands, { permissions } from './src'
+import permissions from './permissions.json'
 import { EventEmitter } from 'events'
+import SLCommands from './src'
 import { Chalk } from 'chalk'
 
-/* SYSTEM */
+/* HANDLER */
 
 export interface HandlerEvents {
 	databaseConnected: [connection: Connection, state: string]
@@ -103,6 +108,40 @@ export default class SLCommands extends EventEmitter {
 	public removeAllListeners<K extends keyof HandlerEvents>(event?: K): this
 }
 
+export class Command {
+	name: string
+	description?: string
+	type: ApplicationCommandType | 'SUBCOMMAND'
+	hasSub?: boolean
+	testOnly?: boolean
+	devsOnly?: boolean
+	callback: Callback
+	reference?: string
+	permissions?: PermString[]
+	options?: ApplicationCommandOptionData[]
+
+	constructor(obj: CommandType)
+}
+
+export class Event<K extends keyof ClientEvents> {
+	constructor(
+		public name: K,
+		public callback: (
+			client: Client,
+			handler: SLCommands,
+			...args: ClientEvents[K]
+		) => any
+	)
+}
+
+export class SLEmbed extends MessageEmbed {
+	constructor(options?: MessageEmbedOptions)
+
+	setSuccess(name: string, footer?: string): this
+	setLoading(name: string, footer?: string): this
+	setError(name: string, footer?: string): this
+}
+
 /* UTILS */
 
 export type PermString = keyof typeof permissions
@@ -113,6 +152,12 @@ interface BaseInteraction {
 	guild: Guild & {
 		me: GuildMember
 	}
+}
+
+interface BaseCommandType {
+	permissions?: PermString | PermString[]
+	testOnly?: boolean
+	devsOnly?: boolean
 }
 
 /* COMMANDS & CONTEXTS */
@@ -127,7 +172,7 @@ export type EContextInteraction<T extends 'MESSAGE' | 'USER'> =
 export type CommandType = ChatInputType | MessageType | UserType | SubType
 export type Callback = ChatInputCallback | MessageCallback | UserCallback
 
-export type SubType = {
+export interface SubType {
 	type: 'SUBCOMMAND'
 	name: string
 	reference: string
@@ -139,7 +184,9 @@ export type SubType = {
 	}) => any
 }
 
-export type ChatInputType = {
+export interface ChatInputCommandType
+	extends BaseCommandType,
+		ChatInputApplicationCommandData {
 	type: 'CHAT_INPUT'
 	callback: (obj: {
 		client: Client
@@ -147,10 +194,11 @@ export type ChatInputType = {
 		interaction: ECommandInteraction
 		options?: CommandInteractionOptionResolver
 	}) => any
-} & BaseType &
-	ChatInputApplicationCommandData
+}
 
-export type MessageType = {
+export interface MessageCommandType
+	extends BaseCommandType,
+		MessageApplicationCommandData {
 	type: 'MESSAGE'
 	callback: (obj: {
 		client: Client
@@ -158,10 +206,11 @@ export type MessageType = {
 		handler: SLCommands
 		interaction: EContextInteraction<'MESSAGE'>
 	}) => any
-} & BaseType &
-	MessageApplicationCommandData
+}
 
-export type UserType = {
+export interface UserCommandType
+	extends BaseCommandType,
+		UserApplicationCommandData {
 	type: 'USER'
 	callback: (obj: {
 		target: User
@@ -169,13 +218,6 @@ export type UserType = {
 		handler: SLCommands
 		interaction: EContextInteraction<'USER'>
 	}) => any
-} & BaseType &
-	UserApplicationCommandData
-
-interface BaseType {
-	permissions?: PermString | PermString[]
-	testOnly?: boolean
-	devsOnly?: boolean
 }
 
 export type ChatInputCallback = ChatInputType['callback']

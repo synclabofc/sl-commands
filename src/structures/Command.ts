@@ -3,16 +3,17 @@ import {
 	ApplicationCommandType,
 } from 'discord.js'
 
-import perms from '../permissions.json'
 import {
-	Callback,
-	ChatInputType,
+	ChatInputCommandType,
+	MessageCommandType,
+	UserCommandType,
 	CommandType,
-	MessageType,
 	PermString,
+	Callback,
 	SubType,
-	UserType,
 } from '../../typings'
+
+import perms from '../../permissions.json'
 
 export class Command {
 	name: string
@@ -35,7 +36,7 @@ export class Command {
 				testOnly,
 				devsOnly = false,
 				permissions = [],
-			} = obj as ChatInputType | MessageType | UserType
+			} = obj as ChatInputCommandType | MessageCommandType | UserCommandType
 
 			this.testOnly = testOnly
 			this.devsOnly = devsOnly
@@ -53,7 +54,7 @@ export class Command {
 		}
 
 		if (type === 'CHAT_INPUT') {
-			obj = obj as ChatInputType
+			obj = obj as ChatInputCommandType
 			let { description: desc, options } = obj
 
 			this.options = options || []
@@ -70,11 +71,11 @@ export class Command {
 		}
 
 		if (type === 'MESSAGE') {
-			obj = obj as MessageType
+			obj = obj as MessageCommandType
 		}
 
 		if (type === 'USER') {
-			obj = obj as UserType
+			obj = obj as UserCommandType
 		}
 
 		if (!callback || !type) {
