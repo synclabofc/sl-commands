@@ -1,6 +1,6 @@
-import { Client, ClientEvents } from 'discord.js';
+import { Client, ClientEvents } from 'discord.js'
 
-import BlueyCommands from '..';
+import BlueyCommands from '..'
 
 export class Event<K extends keyof ClientEvents> {
 	constructor(

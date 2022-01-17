@@ -1,5 +1,3 @@
-import { Command } from './Command';
-import { SLEmbed } from './Embed';
-import { Event } from './Event';
-
-export { Command, Event, SLEmbed }
+export * from './Command'
+export * from './Embed'
+export * from './Event'

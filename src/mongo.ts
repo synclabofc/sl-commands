@@ -11,7 +11,7 @@ const results: {
 	3: 'Disconnecting',
 }
 
-export default async (
+export const mongo = async (
 	handler: SLCommands,
 	mongoPath: string,
 	dbOptions = {}
