@@ -2,7 +2,8 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "esnext",
-		"outDir": "./dist",
+		"outDir": "dist",
+		"rootDir": "src",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"importHelpers": true,

@@ -1,11 +1,11 @@
 {
 	"name": "sl-commands",
-	"version": "1.3.0",
+	"version": "1.3.1",
 	"description": "A simple handler for discord.js v13.",
 	"main": "dist/index.js",
 	"types": "typings.d.ts",
 	"scripts": {
-		"latest": "tsc && npm publish --tag latest && git push",
+		"latest": "tsc && npm publish && git push",
 		"beta": "npm version patch && tsc && npm publish --tag beta && git push",
 		"test": "cls && ts-node-dev test/index.ts",
 		"tsc": "tsc -w"
