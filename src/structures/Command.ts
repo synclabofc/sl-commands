@@ -7,10 +7,10 @@ import {
 	ChatInputCommandType,
 	MessageCommandType,
 	UserCommandType,
+	SubCommandType,
 	CommandType,
 	PermString,
 	Callback,
-	SubType,
 } from '../../typings'
 
 import perms from '../../permissions.json'
@@ -66,7 +66,7 @@ export class Command {
 		}
 
 		if (type === 'SUBCOMMAND') {
-			obj = obj as SubType
+			obj = obj as SubCommandType
 			this.reference = obj.reference
 		}
 

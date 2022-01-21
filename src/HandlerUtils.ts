@@ -14,9 +14,9 @@ import {
 	EContextInteraction,
 	ChatInputCallback,
 	MessageCallback,
+	SubCommandType,
 	UserCallback,
 	PermString,
-	SubType,
 } from '../typings'
 
 import SLCommands, { SLEmbed, Command } from '.'
@@ -71,7 +71,7 @@ class HandlerUtils {
 				)
 
 				if (hasSub && subCommand) {
-					let { callback } = subCommand as SubType
+					let { callback } = subCommand as SubCommandType
 
 					await callback({
 						options: int.options as OptRsvlr,

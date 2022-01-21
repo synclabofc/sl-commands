@@ -2,9 +2,9 @@ import { Collection } from 'discord.js'
 import { existsSync } from 'fs'
 import { glob } from 'glob'
 
-import SLCommands, { Command } from '.'
-import { CommandType, SubType } from '../typings'
+import { CommandType, SubCommandType } from '../typings'
 import HandlerUtils from './HandlerUtils'
+import SLCommands, { Command } from '.'
 
 class CommandHandler {
 	private _subcommands = new Collection<string, Command>()
@@ -56,7 +56,10 @@ class CommandHandler {
 	}
 
 	private async registerCommands(handler: SLCommands) {
-		let register = [...this.commandsArray] as Exclude<CommandType, SubType>[]
+		let register = [...this.commandsArray] as Exclude<
+			CommandType,
+			SubCommandType
+		>[]
 
 		let global = register.filter(c => !c.testOnly)
 		let test = register.filter(c => c.testOnly)

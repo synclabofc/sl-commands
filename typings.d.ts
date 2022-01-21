@@ -189,10 +189,10 @@ export type EContextInteraction<T extends 'MESSAGE' | 'USER'> =
 			? UserContextMenuInteraction
 			: MessageContextMenuInteraction)
 
-export type CommandType = ChatInputType | MessageType | UserType | SubType
+export type CommandType = ChatInputCommandType | MessageCommandType | UserCommandType | SubCommandType
 export type Callback = ChatInputCallback | MessageCallback | UserCallback
 
-export interface SubType {
+export interface SubCommandType {
 	type: 'SUBCOMMAND'
 	name: string
 	reference: string
@@ -240,6 +240,6 @@ export interface UserCommandType
 	}) => any
 }
 
-export type ChatInputCallback = ChatInputType['callback']
-export type MessageCallback = MessageType['callback']
-export type UserCallback = UserType['callback']
+export type ChatInputCallback = ChatInputCommandType['callback']
+export type MessageCallback = MessageCommandType['callback']
+export type UserCallback = UserCommandType['callback']
