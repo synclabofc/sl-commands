@@ -73,12 +73,16 @@ class HandlerUtils {
 				if (hasSub && subCommand) {
 					let { callback } = subCommand as SubCommandType
 
-					await callback({
-						options: int.options as OptRsvlr,
-						interaction: int,
-						handler,
-						client,
-					})
+					try {
+						await callback({
+							options: int.options as OptRsvlr,
+							interaction: int,
+							handler,
+							client,
+						})
+					} catch (err) {
+						handler.emit('commandException', subCommand.name ?? 'unknown', err)
+					}
 					return
 				}
 			} else if (!int.isContextMenu()) return
@@ -110,13 +114,8 @@ class HandlerUtils {
 						client,
 					})
 				}
-			} catch (e) {
-				handler.logger.error(`Error at ${int.commandName}:\n`, e)
-				setTimeout(() => {
-					int[int.replied ? 'followUp' : 'reply']({
-						embeds: [new SLEmbed().setError(`Ocorreu um erro inesperado.`)],
-					})
-				}, 500)
+			} catch (err) {
+				handler.emit('commandException', command.name ?? 'unknown', err)
 			}
 		})
 	}
