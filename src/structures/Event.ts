@@ -1,5 +1,5 @@
 import { Client, ClientEvents } from 'discord.js'
-import SLCommands from '../..'
+import SLCommands from '..'
 
 export class Event<K extends keyof ClientEvents> {
 	constructor(

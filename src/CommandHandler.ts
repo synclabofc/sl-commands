@@ -20,6 +20,7 @@ class CommandHandler {
 
 		try {
 			this.load(handler, dir)
+			// @ts-ignore
 			new HandlerUtils().setUp(handler, this._commands, this._subcommands)
 		} catch (e) {
 			handler.logger.error(`Ocurred an error while loading commands.\n`, e)

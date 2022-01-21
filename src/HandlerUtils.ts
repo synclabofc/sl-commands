@@ -58,10 +58,10 @@ class HandlerUtils {
 
 			if (type == 'CHAT_INPUT') {
 				if (!int.isCommand()) return
-				let subName: string;
+				let subName: string
 
 				try {
-					subName = int.options.getSubcommand();
+					subName = int.options.getSubcommand()
 				} catch {
 					null
 				}
