@@ -21,7 +21,7 @@
 		"class"
 	],
 	"author": "bluey#0012",
-	"license": "ISC",
+	"license": "MIT",
 	"dependencies": {
 		"chalk": "^4.1.2",
 		"discord.js": "^13.5.0",
