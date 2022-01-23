@@ -90,9 +90,22 @@ class HandlerUtils {
 			try {
 				if (type === 'CHAT_INPUT') {
 					callback = callback as ChatInputCallback
+
+					let optionsArray: (string | number | boolean)[] = []
+
+					for (let option of int.options.data) {
+						if (option.type === 'SUB_COMMAND') {
+							if (option.name) optionsArray.push(option.name)
+							option.options?.forEach(x => {
+								if (x.value) optionsArray.push(x.value)
+							})
+						} else if (option.value) optionsArray.push(option.value)
+					}
+
 					await callback({
 						options: int.options as CommandInteractionOptionResolver,
 						interaction: int as ECommandInteraction,
+						optionsArray,
 						handler,
 						client,
 					})

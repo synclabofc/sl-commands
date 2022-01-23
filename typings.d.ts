@@ -189,7 +189,11 @@ export type EContextInteraction<T extends 'MESSAGE' | 'USER'> =
 			? UserContextMenuInteraction
 			: MessageContextMenuInteraction)
 
-export type CommandType = ChatInputCommandType | MessageCommandType | UserCommandType | SubCommandType
+export type CommandType =
+	| ChatInputCommandType
+	| MessageCommandType
+	| UserCommandType
+	| SubCommandType
 export type Callback = ChatInputCallback | MessageCallback | UserCallback
 
 export interface SubCommandType {
@@ -213,6 +217,7 @@ export interface ChatInputCommandType
 		handler: SLCommands
 		interaction: ECommandInteraction
 		options?: CommandInteractionOptionResolver
+		optionsArray?: (string | number | boolean)[]
 	}) => any
 }
 
