@@ -4,6 +4,8 @@
 		"target": "esnext",
 		"outDir": "dist",
 		"rootDir": "src",
+		"moduleResolution": "Node",
+		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"importHelpers": true,
