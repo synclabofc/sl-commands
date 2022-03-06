@@ -25,6 +25,9 @@ export default class SLCommands extends EventEmitter {
 	private _mongoConnection: Connection | null = null
 	private _commandHandler: CommandHandler | null = null
 	private _eventHandler: EventHandler | null = null
+	static SLEmbed = SLEmbed
+	static Command = Command
+	static Event = Event
 
 	/**
 	 * @desc Sets up the handler
@@ -235,5 +238,4 @@ export default class SLCommands extends EventEmitter {
 	}
 }
 
-export { SLEmbed, Command, Event }
 module.exports = SLCommands
