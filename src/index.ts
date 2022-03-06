@@ -236,4 +236,6 @@ export default class SLCommands extends EventEmitter {
 }
 
 export { Command, Event, SLEmbed }
+
+Object.assign(SLCommands, { SLEmbed, Command, Event })
 module.exports = SLCommands
