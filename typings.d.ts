@@ -211,7 +211,7 @@ export interface SubCommandType {
 export interface ChatInputCommandType
 	extends BaseCommandType,
 		ChatInputApplicationCommandData {
-	type: 'CHAT_INPUT'
+	type?: 'CHAT_INPUT'
 	callback: (obj: {
 		client: Client
 		handler: SLCommands

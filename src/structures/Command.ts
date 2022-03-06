@@ -18,7 +18,7 @@ import perms from '../../permissions.json'
 export class Command {
 	name: string
 	description?: string
-	type: ApplicationCommandType | 'SUBCOMMAND'
+	type?: ApplicationCommandType | 'SUBCOMMAND'
 
 	hasSub?: boolean
 	testOnly?: boolean
@@ -29,7 +29,13 @@ export class Command {
 	options?: ApplicationCommandOptionData[]
 
 	constructor(obj: CommandType) {
-		let { callback, name, type } = obj
+		let { callback, name, type = 'CHAT_INPUT' } = obj
+
+		if (!['CHAT_INPUT', 'SUBCOMMAND', 'MESSAGE', 'USER'].includes(type)) {
+			throw new TypeError(
+				`SLCommands > Command type must be one of these: 'CHAT_INPUT', 'SUB_COMMAND', 'MESSAGE' or 'USER'.`
+			)
+		}
 
 		if (['CHAT_INPUT', 'MESSAGE', 'USER'].includes(type)) {
 			let {
@@ -78,9 +84,9 @@ export class Command {
 			obj = obj as UserCommandType
 		}
 
-		if (!callback || !type) {
+		if (!callback) {
 			throw new TypeError(
-				`SLCommands > Callback or type missing at ${name || 'unknown'} command.`
+				`SLCommands > Callback missing at ${name || 'unknown'} command.`
 			)
 		}
 
