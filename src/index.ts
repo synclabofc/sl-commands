@@ -12,7 +12,7 @@ import EventHandler from './EventHandler'
 
 const { log } = console
 
-class SLCommands extends EventEmitter {
+export default class SLCommands extends EventEmitter {
 	private _client: Client
 	private _token: string = ''
 	private _eventsDir: string = ''
@@ -236,4 +236,4 @@ class SLCommands extends EventEmitter {
 }
 
 export { SLEmbed, Command, Event }
-export default SLCommands
+module.exports = SLCommands
