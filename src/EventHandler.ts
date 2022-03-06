@@ -28,7 +28,7 @@ class EventHandler {
 		let eventFiles = glob.sync(dir, { absolute: true })
 
 		for (let file of eventFiles) {
-			let event: Event<keyof ClientEvents> = require(file)?.default
+			let event: Event<keyof ClientEvents> = handler.import(file)
 			if (!event) continue
 
 			this._events.set(event.name, event)

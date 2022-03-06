@@ -31,7 +31,7 @@ class FeatureHandler {
 				client: Client,
 				handler: SLCommands,
 				...args: any[]
-			) => any = require(file)?.default
+			) => any = handler.import(file)
 
 			if (feature) feature(client, handler)
 		}

@@ -166,6 +166,11 @@ export default class SLCommands extends EventEmitter {
 		},
 	}
 
+	public import(path: string) {
+		let file = require(path)
+		return file?.default ? file.default : file
+	}
+
 	/**
 	 * @desc Add test servers to the handler (you can add it as a property when setting up the handler instead)
 	 *

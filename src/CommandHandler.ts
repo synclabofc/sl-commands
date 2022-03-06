@@ -27,12 +27,12 @@ class CommandHandler {
 		}
 	}
 
-	private load(handler: SLCommands, dir: string) {
+	private async load(handler: SLCommands, dir: string) {
 		dir += '/**/*{.ts,.js}'
 		let commandFiles = glob.sync(dir, { absolute: true })
 
 		for (let file of commandFiles) {
-			let command: Command = require(file)?.default
+			let command: Command = handler.import(file)
 			if (!command) continue
 
 			if (command.type === 'SUBCOMMAND') {
