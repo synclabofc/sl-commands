@@ -22,6 +22,7 @@ export default class SLCommands extends EventEmitter {
 	private _testServers: string[] = []
 	private _showWarns: boolean = true
 	private _testOnly: boolean = false
+	private _language: 'pt-br' | 'en-us' = 'en-us'
 	private _mongoConnection: Connection | null = null
 	private _commandHandler: CommandHandler | null = null
 	private _eventHandler: EventHandler | null = null
@@ -54,6 +55,7 @@ export default class SLCommands extends EventEmitter {
 			botOwners,
 			dbOptions,
 			mongoUri,
+			language = 'en-us',
 			showWarns = true,
 			testOnly = false,
 		} = options || {}
@@ -72,11 +74,18 @@ export default class SLCommands extends EventEmitter {
 			}
 		}
 
+		if (!['pt-br', 'en-us'].includes(language)) {
+			throw new Error(
+				'SLCommands > You must use one of the supported languages ("pt-br" or "en-us").'
+			)
+		}
+
 		this._featuresDir = featuresDir
 		this._commandsDir = commandsDir
 		this._eventsDir = eventsDir
 		this._showWarns = showWarns
 		this._testOnly = testOnly
+		this._language = language
 		this._token = botToken
 
 		if (testServers) {
@@ -227,6 +236,11 @@ export default class SLCommands extends EventEmitter {
 	/** @desc If global testOnly is enabled */
 	public get testOnly() {
 		return this._testOnly
+	}
+
+	/** @desc The default language for bot messages */
+	public get language() {
+		return this._language
 	}
 
 	/** @desc Your provided DiscordJS client */

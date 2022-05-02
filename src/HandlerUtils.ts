@@ -19,14 +19,15 @@ import {
 	PermString,
 } from '../typings'
 
-import SLCommands, { SLEmbed, Command } from '.'
+import SLCommands, { Command } from '.'
 import perms from '../permissions.json'
+import getMessage from './MessageHandler'
 
 type ICollection = Collection<string, Command>
 
 class HandlerUtils {
 	setUp(handler: SLCommands, commands: ICollection, subcommands: ICollection) {
-		let { client, botOwners } = handler
+		let { client, language, botOwners } = handler
 
 		client.on('interactionCreate', async inter => {
 			if (!inter.isCommand() && !inter.isContextMenu()) return
@@ -47,6 +48,7 @@ class HandlerUtils {
 				permissions,
 				botOwners,
 				devsOnly,
+				language,
 				member,
 				guild
 			)
@@ -137,26 +139,31 @@ class HandlerUtils {
 		reqPerms: PermString[] = [],
 		botOwners: string[] = [],
 		devsOnly: boolean = false,
+		language: keyof typeof perms,
 		target: GuildMember,
 		guild: Guild
 	): InteractionReplyOptions | null {
 		if (devsOnly && !botOwners.includes(target.id)) {
 			return {
-				content: 'Este comando está reservado para os meus desenvolvedores.',
+				content: getMessage('DEV_ONLY', language),
 				ephemeral: true,
 			}
 		}
 
 		if (reqPerms.length) {
-			let missMe = missing(guild.me!, reqPerms)
-			let missIt = missing(target, reqPerms)
+			let missMe = missing(guild.me!, reqPerms, language)
+			let missIt = missing(target, reqPerms, language)
 			let str
 
 			if (missIt.length) {
 				str = strs(missIt)
 
 				return {
-					content: `Você precisa da${str.s} permiss${str.a} ${str} para utilizar este comando.`,
+					content: getMessage('PERMS_USER', language, {
+						S: str.s,
+						A: str.a,
+						PERMISSIONS: `${str}`,
+					}),
 					ephemeral: true,
 				}
 			}
@@ -165,7 +172,11 @@ class HandlerUtils {
 				str = strs(missMe)
 
 				return {
-					content: `Eu preciso da${str.s} permiss${str.a} ${str} para executar este comando.`,
+					content: getMessage('PERMS_BOT', language, {
+						S: str.s,
+						A: str.a,
+						PERMISSIONS: `${str}`,
+					}),
 					ephemeral: true,
 				}
 			}
@@ -175,12 +186,17 @@ class HandlerUtils {
 	}
 }
 
-function missing(target: GuildMember, required: PermString[]) {
+function missing(
+	target: GuildMember,
+	required: PermString[],
+	language: keyof typeof perms
+) {
 	let miss = target.permissions
 		.missing(required, true)
-		.map(e => perms[e as PermString])
+		.map(e => perms[language][e as PermString])
 
 	if (miss.includes('Administrador')) return ['Administrador']
+	if (miss.includes('Administrator')) return ['Administrator']
 	return miss
 }
 

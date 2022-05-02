@@ -51,7 +51,7 @@ export class Command {
 			this.permissions = permissions
 
 			for (let perm of this.permissions) {
-				if (!perms[perm]) {
+				if (!perms['en-us'][perm]) {
 					throw new TypeError(
 						`SLCommands > The provived permissions for ${name} command are invalid.`
 					)

@@ -22,6 +22,7 @@ import {
 
 import { Connection, ConnectOptions } from 'mongoose'
 import permissions from './permissions.json'
+import messages from './messages.json'
 import { EventEmitter } from 'events'
 import SLCommands from './src'
 import { Chalk } from 'chalk'
@@ -40,6 +41,7 @@ export interface HandlerOptions {
 	botToken: string
 	testServers?: string | string[]
 	botOwners?: string | string[]
+	language?: 'pt-br' | 'en-us'
 	dbOptions?: ConnectOptions
 	showWarns?: boolean
 	testOnly?: boolean
@@ -56,6 +58,7 @@ export default class SLCommands extends EventEmitter {
 	private _showWarns: boolean
 	private _botOwners: string[]
 	private _testServers: string[]
+	private _language: 'pt-br' | 'en-us'
 	private _mongoConnection: Connection | null
 	private _commandHandler: CommandHandler | null
 	private _eventHandler: EventHandler | null
@@ -80,6 +83,7 @@ export default class SLCommands extends EventEmitter {
 	public get mongoConnection(): Connection | null
 	public get commandHandler(): CommandHandler
 	public get eventHandler(): EventHandler
+	public get language(): 'pt-br' | 'en-us'
 	public get testServers(): string[]
 	public get botOwners(): string[]
 	public get showWarns(): boolean
@@ -164,7 +168,7 @@ class EventHandler {
 
 /* UTILS */
 
-export type PermString = keyof typeof permissions
+export type PermString = keyof typeof permissions['en-us']
 type Awaitable<T> = T | PromiseLike<T>
 
 interface BaseInteraction {
