@@ -8,10 +8,10 @@ export class SLEmbed extends MessageEmbed {
 	}
 
 	icons = {
-		loading: 'https://cdn.discordapp.com/emojis/906376863880998973.gif',
-		success: 'https://cdn.discordapp.com/emojis/843197955532128296.png',
-		error: 'https://cdn.discordapp.com/emojis/845705106674155561.png',
-		arrow: 'https://cdn.discordapp.com/emojis/851206127471034378.png',
+		loading: 'https://i.imgur.com/7AFl5HE.gif',
+		success: 'https://i.imgur.com/FGPKOSb.png',
+		error: 'https://i.imgur.com/4Fpg691.png',
+		arrow: 'https://i.imgur.com/jokNI5A.png',
 	}
 
 	setSuccess(name: string, footer?: string): this {
