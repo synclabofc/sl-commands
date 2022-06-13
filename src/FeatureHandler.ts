@@ -21,19 +21,17 @@ class FeatureHandler {
 	}
 
 	private load(handler: SLCommands, dir: string) {
-		let { client } = handler
 		dir += '/**/*{.ts,.js}'
+		const files = glob.sync(dir, { absolute: true })
 
-		let files = glob.sync(dir)
-
-		for (let file of files) {
-			let feature: (
+		for (const file of files) {
+			const feature: (
 				client: Client,
 				handler: SLCommands,
 				...args: any[]
 			) => any = handler.import(file)
 
-			if (feature) feature(client, handler)
+			if (feature && feature instanceof Function) feature(handler.client, handler)
 		}
 
 		handler.logger.tag('FEATURES', `Loaded ${files.length} features.`)

@@ -1,48 +1,35 @@
-import {
-	ApplicationCommandOptionData,
-	ApplicationCommandType,
-} from 'discord.js'
-
-import {
-	ChatInputCommandType,
-	MessageCommandType,
-	UserCommandType,
-	SubCommandType,
-	CommandType,
-	PermString,
-	Callback,
-} from '../../typings'
-
+import { SLPermission, ICallback, ICommand, CommandType } from '../../typings'
+import { ApplicationCommandOptionData } from 'discord.js'
 import perms from '../../permissions.json'
 
 export class Command {
 	name: string
+	type?: CommandType
 	description?: string
-	type?: ApplicationCommandType | 'SUBCOMMAND'
 
 	hasSub?: boolean
 	testOnly?: boolean
 	devsOnly?: boolean
-	callback: Callback
 	reference?: string
-	permissions?: PermString[]
+	permissions?: SLPermission[]
+	callback: ICallback<CommandType>
 	options?: ApplicationCommandOptionData[]
 
-	constructor(obj: CommandType) {
-		let { callback, name, type = 'CHAT_INPUT' } = obj
+	constructor(obj: ICommand) {
+		let { callback, name, type } = obj
 
-		if (!['CHAT_INPUT', 'SUBCOMMAND', 'MESSAGE', 'USER'].includes(type)) {
+		if (!['CHAT_INPUT', 'SUB_COMMAND', 'MESSAGE', 'USER'].includes(type)) {
 			throw new TypeError(
-				`SLCommands > Command type must be one of these: 'CHAT_INPUT', 'SUB_COMMAND', 'MESSAGE' or 'USER'.`
+				`SLCommands > Invalid type (Supported: 'SUB_COMMAND', 'CHAT_INPUT', 'MESSAGE' and 'USER'). [${name} command]`
 			)
 		}
 
-		if (['CHAT_INPUT', 'MESSAGE', 'USER'].includes(type)) {
-			let {
-				testOnly,
-				devsOnly = false,
-				permissions = [],
-			} = obj as ChatInputCommandType | MessageCommandType | UserCommandType
+		if (!callback) {
+			throw new TypeError(`SLCommands > Missing callback. [${name} command]`)
+		}
+
+		if (obj.type !== 'SUB_COMMAND') {
+			let { testOnly, devsOnly = false, permissions = [] } = obj
 
 			this.testOnly = testOnly
 			this.devsOnly = devsOnly
@@ -53,16 +40,14 @@ export class Command {
 			for (let perm of this.permissions) {
 				if (!perms['en-us'][perm]) {
 					throw new TypeError(
-						`SLCommands > The provived permissions for ${name} command are invalid.`
+						`SLCommands > Invalid permissions. [${name} command]`
 					)
 				}
 			}
 		}
 
-		if (type === 'CHAT_INPUT') {
-			obj = obj as ChatInputCommandType
+		if (obj.type === 'CHAT_INPUT') {
 			let { description: desc, options } = obj
-
 			this.options = options || []
 			this.description = desc
 		}
@@ -71,27 +56,15 @@ export class Command {
 			this.hasSub = true
 		}
 
-		if (type === 'SUBCOMMAND') {
-			obj = obj as SubCommandType
-			this.reference = obj.reference
-		}
-
-		if (type === 'MESSAGE') {
-			obj = obj as MessageCommandType
-		}
-
-		if (type === 'USER') {
-			obj = obj as UserCommandType
-		}
-
-		if (!callback) {
-			throw new TypeError(
-				`SLCommands > Callback missing at ${name || 'unknown'} command.`
-			)
+		if (obj.type === 'SUB_COMMAND') {
+			let { reference } = obj
+			this.reference = reference
 		}
 
 		this.name = name
 		this.type = type
-		this.callback = callback
+		this.callback = callback as ICallback<CommandType>
 	}
 }
+
+function isMessage(command: ICommand) {}

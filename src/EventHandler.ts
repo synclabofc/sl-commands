@@ -22,21 +22,22 @@ class EventHandler {
 	}
 
 	private load(handler: SLCommands, dir: string) {
-		let { client } = handler
+		const { client } = handler
 		dir += '/**/*{.ts,.js}'
 
-		let eventFiles = glob.sync(dir, { absolute: true })
+		const eventFiles = glob.sync(dir, { absolute: true })
 
-		for (let file of eventFiles) {
-			let event: Event<keyof ClientEvents> = handler.import(file)
-			if (!event) continue
+		for (const file of eventFiles) {
+			const event: Event<keyof ClientEvents> = handler.import(file)
+			if (!event || !(event instanceof Event)) {
+				continue
+			}
 
 			this._events.set(event.name, event)
-
-			handler.client.on(event.name, event.callback.bind(null, client, handler))
+			client.on(event.name, event.callback.bind(null, client, handler))
 		}
 
-		handler.logger.tag('EVENTS', `Loaded ${this.eventsArray.length} events.`)
+		handler.logger.tag('EVENTS', `Loaded ${this.events.size} events.`)
 	}
 
 	/** @returns The events collection */

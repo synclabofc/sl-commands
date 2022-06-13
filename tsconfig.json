@@ -8,11 +8,12 @@
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
+		"noImplicitAny": false,
 		"importHelpers": true,
 		"skipLibCheck": true,
 		"declaration": true,
 		"strict": true
 	},
-	"include": ["src"],
+	"include": ["src", "test/index.test.ts"],
 	"exclude": ["test"]
 }

@@ -1,10 +1,10 @@
-import { Collection } from 'discord.js'
+import { ApplicationCommandDataResolvable, Collection } from 'discord.js'
 import { existsSync } from 'fs'
 import { glob } from 'glob'
 
-import { CommandType, SubCommandType } from '../typings'
-import HandlerUtils from './HandlerUtils'
+import CommandListener from './CommandListener'
 import SLCommands, { Command } from '.'
+import { ICommand } from '../typings'
 
 class CommandHandler {
 	private _subcommands = new Collection<string, Command>()
@@ -20,8 +20,14 @@ class CommandHandler {
 
 		try {
 			this.load(handler, dir)
-			// @ts-ignore
-			new HandlerUtils().setUp(handler, this._commands, this._subcommands)
+			new CommandListener().setUp(
+				handler,
+				this._commands as Collection<
+					string,
+					Command & { type: 'CHAT_INPUT' | 'MESSAGE' | 'USER' }
+				>,
+				this._subcommands
+			)
 		} catch (e) {
 			handler.logger.error(`Ocurred an error while loading commands.\n`, e)
 		}
@@ -29,16 +35,18 @@ class CommandHandler {
 
 	private async load(handler: SLCommands, dir: string) {
 		dir += '/**/*{.ts,.js}'
-		let commandFiles = glob.sync(dir, { absolute: true })
+		const commandFiles = glob.sync(dir, { absolute: true })
 
-		for (let file of commandFiles) {
-			let command: Command = handler.import(file)
-			if (!command) continue
+		for (const file of commandFiles) {
+			const command: Command = handler.import(file)
+			if (!command || !(command instanceof Command)) {
+				continue
+			}
 
-			if (command.type === 'SUBCOMMAND') {
+			if (command.type === 'SUB_COMMAND') {
 				this._subcommands.set(command.reference + ' ' + command.name, command)
 			} else {
-				if (command.testOnly === undefined) {
+				if (!('testOnly' in command)) {
 					command.testOnly = handler.testOnly
 				}
 
@@ -48,28 +56,23 @@ class CommandHandler {
 
 		handler.logger.tag(
 			'COMMANDS',
-			`Loaded ${
-				this.commandsArray.length + this.subcommandsArray.length
-			} commands.`
+			`Loaded ${this.commands.size + this.subcommands.size} commands.`
 		)
 
 		handler.client.once('ready', () => this.registerCommands(handler))
 	}
 
 	private async registerCommands(handler: SLCommands) {
-		let register = [...this.commandsArray] as Exclude<
-			CommandType,
-			SubCommandType
-		>[]
+		const register = this.commandsArray as (ApplicationCommandDataResolvable &
+			ICommand)[]
 
-		let global = register.filter(c => !c.testOnly)
-		let test = register.filter(c => c.testOnly)
+		const global = register.filter(c => !c.testOnly),
+			test = register.filter(c => c.testOnly)
 
 		handler.client.application?.commands.set(global)
 
-		for (let id of handler.testServers) {
-			;(await handler.client.guilds.fetch(id))?.commands.set(test)
-		}
+		for (const id of handler.testServers)
+			(await handler.client.guilds.fetch(id))?.commands.set(test)
 	}
 
 	/** @returns The commands collection */

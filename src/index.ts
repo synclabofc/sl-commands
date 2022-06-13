@@ -4,15 +4,13 @@ import { HandlerOptions } from '../typings'
 import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
 import { Client } from 'discord.js'
-import chalk from 'chalk'
+import { Logger } from './logger'
 
 import CommandHandler from './CommandHandler'
 import FeatureHandler from './FeatureHandler'
 import EventHandler from './EventHandler'
 
-const { log } = console
-
-export default class SLCommands extends EventEmitter {
+class SLCommands extends EventEmitter {
 	private _client: Client
 	private _token: string = ''
 	private _eventsDir: string = ''
@@ -37,12 +35,11 @@ export default class SLCommands extends EventEmitter {
 		super()
 
 		this._client = client
-
-		this.setUp(client, options)
+		this.setUp(options)
 	}
 
-	public async setUp(client: Client, options: HandlerOptions) {
-		if (!client) {
+	public async setUp(options: HandlerOptions) {
+		if (!this._client) {
 			throw new Error('SLCommands > Please provide a DiscordJS Client.')
 		}
 
@@ -61,7 +58,7 @@ export default class SLCommands extends EventEmitter {
 		} = options || {}
 
 		if (!botToken) {
-			throw new Error('SLCommands > The botToken property is missing.')
+			throw new Error('SLCommands > Please provide your Bot Token.')
 		}
 
 		if (mongoUri) {
@@ -76,17 +73,9 @@ export default class SLCommands extends EventEmitter {
 
 		if (!['pt-br', 'en-us'].includes(language)) {
 			throw new Error(
-				'SLCommands > You must use one of the supported languages ("pt-br" or "en-us").'
+				'SLCommands > You must use one of the supported languages ("pt-br" and "en-us").'
 			)
 		}
-
-		this._featuresDir = featuresDir
-		this._commandsDir = commandsDir
-		this._eventsDir = eventsDir
-		this._showWarns = showWarns
-		this._testOnly = testOnly
-		this._language = language
-		this._token = botToken
 
 		if (testServers) {
 			if (typeof testServers == 'string') testServers = [testServers]
@@ -98,8 +87,16 @@ export default class SLCommands extends EventEmitter {
 			this._botOwners = botOwners
 		}
 
+		this._featuresDir = featuresDir
+		this._commandsDir = commandsDir
+		this._eventsDir = eventsDir
+		this._showWarns = showWarns
+		this._testOnly = testOnly
+		this._language = language
+		this._token = botToken
+
 		if (showWarns) {
-			let properties: (keyof HandlerOptions)[] = [
+			let props: (keyof HandlerOptions)[] = [
 				'commandsDir',
 				'featuresDir',
 				'eventsDir',
@@ -107,7 +104,7 @@ export default class SLCommands extends EventEmitter {
 				'botOwners',
 			]
 
-			for (let prop of properties) {
+			for (let prop of props) {
 				if (options && !options[prop]) {
 					this.logger.warn(`SLCommands > The property ${prop} is missing.`)
 				}
@@ -119,60 +116,6 @@ export default class SLCommands extends EventEmitter {
 		this._eventHandler = new EventHandler(this, this._eventsDir)
 
 		this._client.login(this._token)
-	}
-
-	public logger = {
-		/**
-		 * @param {string} hex - The HEX code
-		 */
-		hex(hex: string) {
-			return chalk.hex(hex)
-		},
-		/**
-		 * @param {string} hex - The HEX code
-		 */
-		bgHex(hex: string) {
-			return chalk.bgHex(hex)
-		},
-		/**
-		 * @param {string} hex - The HEX code
-		 * @param {string} prefix - The [PREFIX]
-		 */
-		create(hex: string, prefix: string) {
-			return chalk.white('[') + this.hex(hex)(prefix) + chalk.white(']')
-		},
-		/**
-		 * @param {string[]} ...args - Anything you want to log with warn as prefix
-		 */
-		warn(...args: any[]) {
-			log(this.create('#ffffcc', 'WARN'), ...args)
-		},
-		/**
-		 * @param {string[]} ...args - Anything you want to log with error as prefix
-		 */
-		error(...args: any[]) {
-			log(this.create('#f64747', 'ERROR'), ...args)
-		},
-		/**
-		 * @param {string[]} ...args - Anything you want to log with success as prefix
-		 */
-		success(...args: any[]) {
-			log(this.create('#93faa5', 'SUCCESS'), ...args)
-		},
-		/**
-		 * @param {string} tag - The [PREFIX], it can be whatever you want
-		 * @param {string} hex - The HEX code
-		 */
-		custom(tag: string, hex: string, ...args: any[]) {
-			log(this.create(hex, tag), ...args)
-		},
-		/**
-		 * @param {string} tag - The [PREFIX], it can be whatever you want
-		 * @param {string[]} ...args - Anything you want to log with the provided tag as prefix
-		 */
-		tag(tag: string, ...args: any[]) {
-			log(this.create('#6bb9f0', tag), ...args)
-		},
 	}
 
 	public import(path: string) {
@@ -238,6 +181,11 @@ export default class SLCommands extends EventEmitter {
 		return this._testOnly
 	}
 
+	/** @desc If showWarns is enabled */
+	public get showWarns() {
+		return this._showWarns
+	}
+
 	/** @desc The default language for bot messages */
 	public get language() {
 		return this._language
@@ -248,13 +196,12 @@ export default class SLCommands extends EventEmitter {
 		return this._client
 	}
 
-	/** @desc If showWarns is enabled */
-	public get showWarns() {
-		return this._showWarns
+	/** @desc Custom logs (beautier than the default ones) */
+	public get logger() {
+		return new Logger()
 	}
 }
 
+export default SLCommands
 export { Command, Event, SLEmbed }
-
-Object.assign(SLCommands, { SLEmbed, Command, Event })
-module.exports = SLCommands
+module.exports = Object.assign(SLCommands, { Command, Event, SLEmbed })

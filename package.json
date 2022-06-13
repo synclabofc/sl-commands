@@ -7,7 +7,7 @@
 	"scripts": {
 		"latest": "tsc && npm publish && git push",
 		"beta": "npm version patch && tsc && npm publish --tag beta && git push",
-		"test": "cls && ts-node-dev test/index.ts",
+		"test": "cls && ts-node-dev test/index.test.ts",
 		"tsc": "tsc -w"
 	},
 	"keywords": [
@@ -24,7 +24,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"chalk": "^4.1.2",
-		"discord.js": "^13.6.0",
+		"discord.js": "^13.8.0",
 		"dotenv": "^10.0.0",
 		"glob": "^7.2.0",
 		"mongoose": "^6.2.4"

@@ -1,23 +1,27 @@
 import {
-	Guild,
+	Client,
 	Message,
+	Collection,
+	Interaction,
 	MessageEmbed,
+	TextBasedChannel,
 	CommandInteraction,
-	ContextMenuInteraction,
+	ApplicationCommandType,
 	CommandInteractionOption,
-	MessageContextMenuInteraction,
+	UserApplicationCommandData,
 	MessageApplicationCommandData,
 	CommandInteractionOptionResolver,
 	ChatInputApplicationCommandData,
+	MessageContextMenuInteraction,
 	UserContextMenuInteraction,
-	UserApplicationCommandData,
-	ApplicationCommandType,
+	ApplicationCommandData,
+	ContextMenuInteraction,
 	MessageEmbedOptions,
 	ClientEvents,
 	GuildMember,
-	Client,
+	Locale,
+	Guild,
 	User,
-	Collection,
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
@@ -25,7 +29,6 @@ import permissions from './permissions.json'
 import messages from './messages.json'
 import { EventEmitter } from 'events'
 import SLCommands from './src'
-import { Chalk } from 'chalk'
 
 /* HANDLER */
 
@@ -65,17 +68,6 @@ export default class SLCommands extends EventEmitter {
 
 	constructor(client: Client, options: HandlerOptions)
 
-	public logger: {
-		hex(hex: string): Chalk
-		bgHex(hex: string): Chalk
-		warn(...args: any[]): void
-		error(...args: any[]): void
-		success(...args: any[]): void
-		tag(tag: string, ...args: any[]): void
-		create(hex: string, prefix: string): string
-		custom(tag: string, hex: string, ...args: any[]): void
-	}
-
 	public addTestServers(...ids: string[]): this
 	public addBotOwners(...ids: string[]): this
 	public isDBConnected(): boolean
@@ -88,6 +80,7 @@ export default class SLCommands extends EventEmitter {
 	public get botOwners(): string[]
 	public get showWarns(): boolean
 	public get testOnly(): boolean
+	public get logger(): Logger
 	public get client(): Client
 
 	public on<K extends keyof HandlerEvents>(
@@ -117,10 +110,10 @@ export class Command {
 	devsOnly?: boolean
 	callback: Callback
 	reference?: string
-	permissions?: PermString[]
+	permissions?: SLPermission[]
 	options?: ApplicationCommandOptionData[]
 
-	constructor(obj: CommandType)
+	constructor(obj: ICommand)
 }
 
 export class Event<K extends keyof ClientEvents> {
@@ -137,14 +130,21 @@ export class Event<K extends keyof ClientEvents> {
 export class SLEmbed extends MessageEmbed {
 	constructor(options?: MessageEmbedOptions)
 
+	public icons: {
+		loading: string
+		success: string
+		error: string
+		arrow: string
+	}
+
 	setSuccess(name: string, footer?: string): this
 	setLoading(name: string, footer?: string): this
 	setError(name: string, footer?: string): this
 }
 
 class CommandHandler {
-	private _subcommands = new Collection<string, Command>()
-	private _commands = new Collection<string, Command>()
+	private _subcommands: Collection<string, Command>
+	private _commands: Collection<string, Command>
 
 	constructor(handler: SLCommands, dir: string)
 	private load(handler: SLCommands, dir: string)
@@ -157,7 +157,7 @@ class CommandHandler {
 }
 
 class EventHandler {
-	private _events = new Collection<string, Event<keyof ClientEvents>>()
+	private _events: Collection<string, Event<keyof ClientEvents>>
 
 	constructor(handler: SLCommands, dir: string)
 	private load(handler: SLCommands, dir: string)
@@ -168,87 +168,84 @@ class EventHandler {
 
 /* UTILS */
 
-export type PermString = keyof typeof permissions['en-us']
-type Awaitable<T> = T | PromiseLike<T>
-
-interface BaseInteraction {
-	member: GuildMember
-	guild: Guild & {
-		me: GuildMember
+export type SLInteraction<T extends CommandType = CommandType> =
+	CommandTypes[T]['interaction'] & {
+		member: GuildMember
+		guild: Guild & {
+			me: GuildMember
+		}
 	}
-}
 
-interface BaseCommandType {
-	permissions?: PermString | PermString[]
-	testOnly?: boolean
-	devsOnly?: boolean
-}
+export type SLPermission = keyof typeof permissions['en-us']
+
+type Awaitable<T> = T | PromiseLike<T>
+type Arrayable<T> = T | T[]
+type Values<T> = T[keyof T]
 
 /* COMMANDS & CONTEXTS */
 
-export type ECommandInteraction = BaseInteraction & CommandInteraction
-export type EContextInteraction<T extends 'MESSAGE' | 'USER'> =
-	BaseInteraction &
-		(T extends 'USER'
-			? UserContextMenuInteraction
-			: MessageContextMenuInteraction)
+export type CommandType = keyof CommandTypes
 
-export type CommandType =
-	| ChatInputCommandType
-	| MessageCommandType
-	| UserCommandType
-	| SubCommandType
-export type Callback = ChatInputCallback | MessageCallback | UserCallback
-
-export interface SubCommandType {
-	type: 'SUBCOMMAND'
-	name: string
-	reference: string
-	callback: (obj: {
-		client: Client
-		handler: SLCommands
-		interaction: ECommandInteraction
-		options?: CommandInteractionOptionResolver
-	}) => any
+interface CommandTypes {
+	SUB_COMMAND: {
+		callback: {
+			options: CommandInteractionOptionResolver
+			channel: TextBasedChannel
+		}
+		data: {
+			reference: string
+			name: string
+		}
+		interaction: CommandInteraction
+	}
+	CHAT_INPUT: {
+		callback: {
+			options: CommandInteractionOptionResolver
+			channel: TextBasedChannel
+		}
+		data: ChatInputApplicationCommandData
+		interaction: CommandInteraction
+	}
+	MESSAGE: {
+		callback: {
+			target: Message
+			channel: TextBasedChannel
+		}
+		data: MessageApplicationCommandData
+		interaction: MessageContextMenuInteraction
+	}
+	USER: {
+		callback: { target: GuildMember }
+		data: UserApplicationCommandData
+		interaction: UserContextMenuInteraction
+	}
 }
 
-export interface ChatInputCommandType
-	extends BaseCommandType,
-		ChatInputApplicationCommandData {
-	type?: 'CHAT_INPUT'
-	callback: (obj: {
-		client: Client
-		handler: SLCommands
-		interaction: ECommandInteraction
-		options?: CommandInteractionOptionResolver
-		optionsArray?: (string | number | boolean)[]
-	}) => any
-}
+export type ICommand = {
+	[T in keyof CommandTypes]: {
+		type: T
+		callback: ICallback<T>
+	} & CommandTypes[T]['data'] &
+		(T extends 'SUB_COMMAND'
+			? {}
+			: {
+					permissions?: Arrayable<SLPermission>
+					testOnly?: boolean
+					devsOnly?: boolean
+			  })
+}[keyof CommandTypes]
 
-export interface MessageCommandType
-	extends BaseCommandType,
-		MessageApplicationCommandData {
-	type: 'MESSAGE'
-	callback: (obj: {
-		client: Client
-		target: Message
+export type ICallbackObject<T extends CommandType = CommandType> =
+	CommandTypes[T]['callback'] & {
+		interaction: CommandTypes[T]['interaction']
 		handler: SLCommands
-		interaction: EContextInteraction<'MESSAGE'>
-	}) => any
-}
-
-export interface UserCommandType
-	extends BaseCommandType,
-		UserApplicationCommandData {
-	type: 'USER'
-	callback: (obj: {
-		target: User
+		member: GuildMember
 		client: Client
-		handler: SLCommands
-		interaction: EContextInteraction<'USER'>
-	}) => any
-}
+		locale: Locale
+		guild: Guild
+		user: User
+	}
 
-export type ChatInputCallback = ChatInputCommandType['callback']
-export type MessageCallback = MessageCommandType['callback']
-export type UserCallback = UserCommandType['callback']
+export type ICallback<T extends CommandType> = (
+	object: ICallbackObject<T>
+) => any
