@@ -1,8 +1,8 @@
-import { MessageEmbed, MessageEmbedOptions } from 'discord.js'
+import { EmbedBuilder, EmbedData } from 'discord.js'
 
-export class SLEmbed extends MessageEmbed {
-	constructor(options?: MessageEmbedOptions) {
-		super(options)
+export class SLEmbed extends EmbedBuilder {
+	constructor(data?: EmbedData) {
+		super(data)
 
 		this.setColor('#2F3136')
 	}

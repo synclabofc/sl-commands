@@ -1,14 +1,14 @@
 {
 	"name": "sl-commands",
-	"version": "1.6.0",
-	"description": "A simple handler for discord.js v13.",
+	"version": "2.0.1",
+	"description": "A simple handler for discord.js v14.",
 	"main": "dist/index.js",
-	"types": "typings.d.ts",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"latest": "tsc && npm publish && git push",
 		"beta": "npm version patch && tsc && npm publish --tag beta && git push",
-		"test": "cls && ts-node-dev test/index.test.ts",
-		"tsc": "tsc -w"
+		"test": "cls && tsc && ts-node-dev test/index.test.ts",
+		"build": "tsc -w"
 	},
 	"keywords": [
 		"discord",
@@ -23,19 +23,23 @@
 	"author": "bluey#0012",
 	"license": "MIT",
 	"dependencies": {
-		"chalk": "^4.1.2",
-		"discord.js": "^13.8.0",
-		"dotenv": "^10.0.0",
-		"glob": "^7.2.0",
-		"mongoose": "^6.2.4"
+		"@sapphire/shapeshift": "^3.5.1",
+		"chalk": "4.1.2",
+		"discord.js": "^14.2.0",
+		"dotenv": "^16.0.1",
+		"glob": "^8.0.3",
+		"mongoose": "^6.5.2",
+		"ts-mixer": "^6.0.1",
+		"tslib": "^2.4.0",
+		"typed-emitter": "^2.1.0"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.2.0",
-		"@types/node": "^16.11.26",
-		"prettier": "^2.5.1",
-		"ts-node": "^10.7.0",
-		"ts-node-dev": "^1.1.8",
-		"typescript": "^4.6.2"
+		"@types/node": "^18.7.3",
+		"prettier": "^2.7.1",
+		"ts-node": "^10.9.1",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^4.7.4"
 	},
 	"repository": {
 		"type": "git",

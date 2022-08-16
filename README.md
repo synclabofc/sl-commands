@@ -24,7 +24,7 @@ npm install sl-commands
 ```bash
 npm install discord.js
 ```
-_required latest discord.js version_
+_required discord.js v14_
 
 # **Support & Feature Requests**
 

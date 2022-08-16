@@ -1,30 +1,31 @@
 import {
 	CommandInteractionOptionResolver,
-	InteractionReplyOptions,
 	GuildMember,
 	Collection,
 	Message,
 } from 'discord.js'
 
-import { ICallbackObject, SLInteraction, SLPermission } from '../typings'
+import {
+	CommandCallbackObject,
+	CommandCallback,
+	SLInteraction,
+	SLPermission,
+	SLLanguages,
+} from './types'
 
-import getMessage from './MessageHandler'
-import SLCommands, { Command } from '.'
-import perms from '../permissions.json'
+import SLHandler, { SLCommand, SLSubCommand } from '.'
+import MessageHandler from './handlers/MessageHandler';
+import perms from './permissions.json'
 
-type MissingTuple = [string[], 'USER' | 'BOT']
-type Language = keyof typeof perms
-
-type SCollection = Collection<string, Command>
-type CCollection = Collection<
-	string,
-	Command & { type: 'CHAT_INPUT' | 'MESSAGE' | 'USER' }
->
+type SCollection = Collection<string, SLSubCommand>
+type CCollection = Collection<string, SLCommand>
+type OptRsvlr = CommandInteractionOptionResolver
+type MissingTuple = [string[], 'User' | 'Bot']
 
 class CommandListener {
-	setUp(handler: SLCommands, commands: CCollection, subcommands: SCollection) {
+	setUp(handler: SLHandler, commands: CCollection, subcommands: SCollection) {
 		handler.client.on('interactionCreate', async raw => {
-			if (!raw.isCommand() && !raw.isContextMenu()) return
+			if (!raw.isChatInputCommand() && !raw.isContextMenuCommand()) return
 
 			const command = commands.get(raw.commandName)
 			const interaction = raw as SLInteraction
@@ -32,108 +33,111 @@ class CommandListener {
 			if (!command) return
 
 			const { member, guild, user, channel, locale, options } = interaction
-			const { callback, hasSub } = command
+			const callback = command.callback as CommandCallback
 
-			let check = this.isAvailable(interaction, command, handler)
+			let check = await this.isAvailable(interaction, command, handler)
 
 			if (check) {
 				interaction.reply(check)
 				return
 			}
 
-			let cbObject: Partial<ICallbackObject> = {
+			let cbObject: CommandCallbackObject = {
 				client: handler.client,
+				options: undefined!,
+				channel: undefined!,
+				guild: guild!,
 				interaction,
 				handler,
 				locale,
 				member,
-				guild,
 				user,
 			}
 
-			if (interaction.isCommand() && hasSub) {
-				let { name } = options.data[0]
-
-				const subCommand = subcommands.find(
-					s => s.name === interaction.commandName + ' ' + name
+			if (interaction.isChatInputCommand()) {
+				const subCommand = subcommands.find(s =>
+					options.data.some(
+						({ name }) => s.name === interaction.commandName + ' ' + name
+					)
 				)
 
 				if (subCommand) {
-					cbObject = {
+					cbObject = Object.assign(cbObject, {
 						options: options as OptRsvlr,
 						channel: channel!,
-						...cbObject,
-					}
+					})
 				}
-			} else if (interaction.isUserContextMenu()) {
-				cbObject = {
+			} else if (interaction.isUserContextMenuCommand()) {
+				cbObject = Object.assign(cbObject, {
 					target: interaction.targetMember as GuildMember,
-					...cbObject,
-				}
-			} else if (interaction.isMessageContextMenu()) {
-				cbObject = {
+				})
+			} else if (interaction.isMessageContextMenuCommand()) {
+				cbObject = Object.assign(cbObject, {
 					target: interaction.targetMessage as Message,
 					channel: channel!,
-					...cbObject,
-				}
+				})
 			} else {
-				cbObject = {
+				cbObject = Object.assign(cbObject, {
 					options: options as OptRsvlr,
 					channel: channel!,
-					...cbObject,
-				}
+				})
 			}
 
 			try {
-				await callback(cbObject as ICallbackObject)
+				await callback(cbObject)
 			} catch (err) {
-				handler.emit('commandException', command.name ?? 'unknown', err)
+				handler.emit(
+					'commandException',
+					command.name ?? 'unknown',
+					err as Error,
+					interaction
+				)
 			}
 		})
 	}
 
-	isAvailable(
-		{ member, guild }: SLInteraction,
-		{ devsOnly, permissions = [] }: Command,
-		{ language, botOwners = [] }: SLCommands
+	private async isAvailable(
+		{ user, member, guild }: SLInteraction,
+		{ devsOnly, permissions }: SLCommand,
+		{ language, botDevsIds = [], messageHandler }: SLHandler
 	) {
-		let response: InteractionReplyOptions | null = null
-
-		if (devsOnly && !botOwners.includes(member.id)) {
-			response = {
-				content: getMessage('DEV_ONLY', language),
+		if (devsOnly && !botDevsIds.includes(user.id)) {
+			return {
+				content: messageHandler.getMessage('DevsOnly', language),
 				ephemeral: true,
 			}
 		}
 
-		if (!response && permissions.length) {
-			response = this.missingPermissions(
-				guild.me!,
+		if (guild && permissions.length) {
+			return this.missingPermissions(
+				await guild.members.fetchMe(),
 				member,
+				messageHandler,
 				permissions,
 				language
 			)
 		}
 
-		return response
+		return null
 	}
 
-	missingPermissions(
+	private missingPermissions(
 		bot: GuildMember,
 		member: GuildMember,
+		handler: MessageHandler,
 		required: SLPermission[],
-		language: Language
+		language: SLLanguages
 	) {
 		const getMissing = (m: GuildMember) =>
 			m.permissions
 				.missing(required, true)
 				.map(e => perms[language][e as SLPermission])
 
-		let missing: MissingTuple = [getMissing(member), 'USER']
-		let adminString = perms[language]['ADMINISTRATOR']
+		let missing: MissingTuple = [getMissing(member), 'User']
+		let adminString = perms[language]['Administrator']
 
 		if (!missing[0].length) {
-			missing = [getMissing(bot), 'BOT']
+			missing = [getMissing(bot), 'Bot']
 		}
 
 		if (missing[0].includes(adminString)) {
@@ -144,7 +148,7 @@ class CommandListener {
 
 		return missing[0].length
 			? {
-					content: getMessage(`PERMS_${missing[1]}`, language, {
+					content: handler.getMessage(`${missing[1]}Perms`, language, {
 						PERMISSIONS: `${strings}`,
 						S: strings.s,
 						A: strings.a,
@@ -154,7 +158,7 @@ class CommandListener {
 			: null
 	}
 
-	getStrings(array: string[]) {
+	private getStrings(array: string[]) {
 		return {
 			s: array.length > 1 ? 's' : '',
 			a: array.length > 1 ? 'ões' : 'ão',
@@ -163,5 +167,4 @@ class CommandListener {
 	}
 }
 
-type OptRsvlr = CommandInteractionOptionResolver
 export = CommandListener

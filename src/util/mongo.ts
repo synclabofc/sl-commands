@@ -1,6 +1,5 @@
 import mongoose, { Connection } from 'mongoose'
-import Events from './enums/Events'
-import SLCommands from '.'
+import SLHandler from '..'
 
 const results: {
 	[name: number]: string
@@ -12,7 +11,7 @@ const results: {
 }
 
 export const mongo = async (
-	handler: SLCommands,
+	handler: SLHandler,
 	mongoPath: string,
 	dbOptions = {}
 ) => {
@@ -24,7 +23,7 @@ export const mongo = async (
 
 	const { connection } = mongoose
 	const state = results[connection.readyState] || 'Unknown'
-	handler.emit(Events.DATABASE_CONNECTED, connection, state)
+	handler.emit('databaseConnected', connection, state)
 }
 
 export const getMongoConnection = (): Connection => {

@@ -1,18 +1,18 @@
 import { Client, ClientEvents } from 'discord.js'
-import SLCommands from '..'
+import SLHandler from '..'
 
-export class Event<K extends keyof ClientEvents> {
+export class SLEvent<K extends keyof ClientEvents> {
 	constructor(
 		public name: K,
 		public callback: (
 			client: Client,
-			handler: SLCommands,
+			handler: SLHandler,
 			...args: ClientEvents[K]
 		) => any
 	) {
 		if (!name || !callback) {
 			throw new TypeError(
-				'SLCommands > You must provide name and callback for every event.'
+				'SLHandler > You must provide name and callback for every event.'
 			)
 		}
 	}
