@@ -8,8 +8,8 @@ import {
 
 import CommandListener from '../CommandListener'
 import { FileManager } from '../util/files'
-import { Logger } from '../util/logger'
 import { Collection } from 'discord.js'
+import { Logger } from '../util/logger'
 import { existsSync } from 'fs'
 import SLHandler from '..'
 
