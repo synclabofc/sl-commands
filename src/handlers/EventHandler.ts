@@ -1,8 +1,8 @@
 import { ClientEvents, Collection } from 'discord.js'
 import { FileManager } from '../util/files';
+import { Logger } from '../util/logger';
 import SLHandler, { SLEvent } from '..'
 import { existsSync } from 'fs'
-import { Logger } from '../util/logger';
 
 class EventHandler {
 	private _events = new Collection<string, SLEvent<keyof ClientEvents>>()
@@ -28,7 +28,7 @@ class EventHandler {
 
 		for (const file of eventFiles) {
 			const event: SLEvent<keyof ClientEvents> = FileManager.import(file)
-			if (!event || !(event instanceof Event)) {
+			if (!event || !(event instanceof SLEvent)) {
 				continue
 			}
 
