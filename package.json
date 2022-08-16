@@ -27,14 +27,12 @@
 		"chalk": "4.1.2",
 		"discord.js": "^14.2.0",
 		"dotenv": "^16.0.1",
-		"glob": "^8.0.3",
 		"mongoose": "^6.5.2",
 		"ts-mixer": "^6.0.1",
 		"tslib": "^2.4.0",
 		"typed-emitter": "^2.1.0"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.2.0",
 		"@types/node": "^18.7.3",
 		"prettier": "^2.7.1",
 		"ts-node": "^10.9.1",
