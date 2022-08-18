@@ -5,7 +5,7 @@ import {
 } from 'discord.js'
 
 import { CommandCallback, SLPermission } from '../types'
-import { Validators } from '../util/validators'
+import { Validators } from '../util'
 import { mix } from 'ts-mixer'
 
 export class SLBaseCommand {
