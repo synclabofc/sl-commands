@@ -4,7 +4,9 @@ export class SLEmbed extends EmbedBuilder {
 	constructor(data?: EmbedData) {
 		super(data)
 
-		this.setColor('#2F3136')
+		if (!data) {
+			this.setColor('#2F3136')
+		}
 	}
 
 	icons = {
@@ -14,26 +16,32 @@ export class SLEmbed extends EmbedBuilder {
 		arrow: 'https://i.imgur.com/jokNI5A.png',
 	}
 
-	setSuccess(name: string, footer?: string): this {
+	setSuccess(name: string, footer?: string) {
 		this.setAuthor({ name, iconURL: this.icons.success })
 
-		if (footer) this.setFooter({ text: footer, iconURL: this.icons.arrow })
+		if (footer) {
+			this.setFooter({ text: footer, iconURL: this.icons.arrow })
+		}
 
 		return this
 	}
 
-	setLoading(name: string, footer?: string): this {
+	setLoading(name: string, footer?: string) {
 		this.setAuthor({ name, iconURL: this.icons.loading })
 
-		if (footer) this.setFooter({ text: footer, iconURL: this.icons.arrow })
+		if (footer) {
+			this.setFooter({ text: footer, iconURL: this.icons.arrow })
+		}
 
 		return this
 	}
 
-	setError(name: string, footer?: string): this {
+	setError(name: string, footer?: string) {
 		this.setAuthor({ name, iconURL: this.icons.error })
 
-		if (footer) this.setFooter({ text: footer, iconURL: this.icons.arrow })
+		if (footer) {
+			this.setFooter({ text: footer, iconURL: this.icons.arrow })
+		}
 
 		return this
 	}
