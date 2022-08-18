@@ -5,10 +5,10 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"latest": "tsc && npm publish && git push",
-		"beta": "npm version patch && tsc && npm publish --tag beta && git push",
-		"test": "cls && tsc && ts-node-dev test/index.test.ts",
-		"build": "tsc -w"
+		"latest": "pnpm build && pnpm publish && git push",
+		"beta": "pnpm version patch && pnpm build && pnpm publish --tag beta && git push",
+		"test": "prettier -w test/**/*.ts && cls && ts-node-dev test/index.test.ts",
+		"build": "tsc && prettier -w src/**/*.ts && cls"
 	},
 	"keywords": [
 		"discord",
