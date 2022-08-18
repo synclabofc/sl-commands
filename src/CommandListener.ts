@@ -36,7 +36,6 @@ class CommandListener {
 			if (!command) return
 
 			const { member, guild, user, channel, locale, options } = interaction
-			const callback = command.callback as CommandCallback
 
 			let check = await this.isAvailable(interaction, command)
 
@@ -90,6 +89,8 @@ class CommandListener {
 			}
 
 			try {
+				const callback = command.callback as CommandCallback
+
 				await callback(cbObject)
 			} catch (err) {
 				if (!(err instanceof Error)) {
