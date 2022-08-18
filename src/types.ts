@@ -72,39 +72,89 @@ export type SLPermission = keyof typeof permissions['en-us']
 export type SLLanguages = keyof typeof permissions
 
 export type HandlerEvents = {
-	databaseConnected: (connection: Connection, state: string) => void
+	databaseConnected: (connection: Connection, state: string) => any
+	commandDevsOnly: (interaction: SLInteraction) => any
 	commandException: (
 		commandName: string,
 		error: Error,
 		interaction: SLInteraction | undefined
-	) => void
+	) => any
+	commandMissingPermissions: (
+		interaction: SLInteraction,
+		details: {
+			bot?: GuildMember
+			member?: GuildMember
+			missingPermissions: SLPermission[]
+			translatedPermissions: string[]
+		}
+	) => any
 }
 
 export interface HandlerOptions {
 	/** The custom messages' json path */
 	messagesPath?: string
+
 	/** The features' directory path */
 	featuresDir?: string
+
 	/** The commands' directory path */
 	commandsDir?: string
+
 	/** The events' directory path */
 	eventsDir?: string
+
 	/** Your Discord Bot's authorization token */
 	botToken: string
-	/** Test only commands will be registered in the guild(s) listed here */
-	testServersIds?: string | string[]
-	/** Users in this list will be able to use `devsOnly` commands */
-	botDevsIds?: string | string[]
-	/** The default language for your Bot */
-	language?: 'pt-br' | 'en-us'
-	/** The DiscordJS Client options */
-	clientOptions?: ClientOptions
-	/** The Mongoose connection options */
-	dbOptions?: ConnectOptions
-	/** Whether the handler should show warns or not */
-	showWarns?: boolean
-	/** The default testOnly value for commands */
-	testOnly?: boolean
+
 	/** The mongoUri for connecting to the database */
 	mongoUri?: string
+
+	/**
+	 * Test only commands will be registered in the guild(s) listed here
+	 * @default []
+	 */
+	testServersIds?: string | string[]
+
+	/**
+	 * Users in this list will be able to use `devsOnly` commands
+	 * @default []
+	 */
+	botDevsIds?: string | string[]
+
+	/**
+	 * The default language for your Bot
+	 * @default 'en-us'
+	 */
+	language?: SLLanguages
+
+	/**
+	 * The DiscordJS Client options
+	 * @default { intents: ['Guilds'] }
+	 */
+	clientOptions?: ClientOptions
+
+	/**
+	 * The Mongoose connection options
+	 * @default {}
+	 */
+	dbOptions?: ConnectOptions
+
+	/**
+	 * Whether or not to use the default replies for DevsOnly & Permissions handlers.
+	 * If it is disabled the events `commandDevsOnly` and `commandMissingPermissions` will be emitted instead of the default replying.
+	 * @default true
+	 */
+	useDefaultMessages?: boolean
+
+	/**
+	 * Whether the handler should show warns or not
+	 * @default true
+	 */
+	showWarns?: boolean
+
+	/**
+	 * The default testOnly value for commands
+	 * @default false
+	 */
+	testOnly?: boolean
 }
