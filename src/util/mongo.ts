@@ -1,31 +1,34 @@
-import mongoose, { Connection } from 'mongoose'
+import mongoose, { connection } from 'mongoose'
 import SLHandler from '..'
 
-const results: {
-	[name: number]: string
-} = {
+const results = {
+	99: 'Uninitialized',
 	0: 'Disconnected',
 	1: 'Connected',
 	2: 'Connecting',
 	3: 'Disconnecting',
 }
 
-export const mongo = async (
-	handler: SLHandler,
-	mongoPath: string,
-	dbOptions = {}
-) => {
-	const options = {
-		keepAlive: true,
-		...dbOptions,
+export class Mongo {
+	constructor(
+		public handler: SLHandler,
+		public mongoUri: string,
+		public dbOptions = {}
+	) {}
+
+	async connect() {
+		const options = {
+			keepAlive: true,
+			...this.dbOptions,
+		}
+
+		await mongoose.connect(this.mongoUri, options)
+
+		const state = results[connection.readyState] || 'Unknown'
+		this.handler.emit('databaseConnected', connection, state)
 	}
-	await mongoose.connect(mongoPath, options)
 
-	const { connection } = mongoose
-	const state = results[connection.readyState] || 'Unknown'
-	handler.emit('databaseConnected', connection, state)
-}
-
-export const getMongoConnection = (): Connection => {
-	return mongoose.connection
+	static getConnection() {
+		return connection
+	}
 }
