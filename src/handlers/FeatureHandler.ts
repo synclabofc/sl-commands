@@ -4,7 +4,7 @@ import { Collection } from 'discord.js'
 import { existsSync } from 'fs'
 
 class FeatureHandler {
-	private _features = new Collection<string, SLFeature>()
+	private _features: SLFeature[] = []
 
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return
@@ -28,6 +28,8 @@ class FeatureHandler {
 			const feature: SLFeature = FileManager.import(file)
 
 			if (feature && feature instanceof SLFeature) {
+				this._features.push(feature)
+
 				feature.initFunction?.({ client: handler.client, handler })
 
 				for (const { callback, interval } of feature.timeFunctions) {
@@ -41,7 +43,7 @@ class FeatureHandler {
 		Logger.tag('FEATURES', `Loaded ${files.length} features.`)
 	}
 
-	/** The features collection */
+	/** The features array */
 	public get features() {
 		return this._features
 	}

@@ -5,10 +5,7 @@ import SLHandler, { SLEvent } from '..'
 import { existsSync } from 'fs'
 
 class EventHandler {
-	private _events = new Collection<
-		string,
-		SLEvent<keyof ClientEvents | keyof HandlerEvents>
-	>()
+	private _events: SLEvent<keyof ClientEvents | keyof HandlerEvents>[] = []
 
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return
@@ -37,7 +34,7 @@ class EventHandler {
 				continue
 			}
 
-			this._events.set(event.name, event)
+			this._events.push(event)
 
 			handler[event.once ? 'once' : 'on'](
 				event.name as keyof HandlerEvents,
@@ -50,10 +47,10 @@ class EventHandler {
 			)
 		}
 
-		Logger.tag('EVENTS', `Loaded ${this.events.size} events.`)
+		Logger.tag('EVENTS', `Loaded ${this.events.length} events.`)
 	}
 
-	/** The events collection */
+	/** The events array */
 	public get events() {
 		return this._events
 	}
