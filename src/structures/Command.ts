@@ -1,4 +1,7 @@
 import {
+	SlashCommandSubcommandGroupBuilder,
+	SlashCommandSubcommandsOnlyBuilder,
+	SlashCommandSubcommandBuilder,
 	ContextMenuCommandBuilder,
 	ContextMenuCommandType,
 	SlashCommandBuilder,
@@ -208,9 +211,37 @@ export class SLSubCommand {
 	}
 }
 
-export interface SLChatInputCommand
+export interface SLSubCommandsOnly
 	extends SLBaseCommand,
-		SlashCommandBuilder {}
+		Pick<SLChatInputCommand, 'onExecute'> {}
+
+export interface SLChatInputCommand extends SLBaseCommand, SlashCommandBuilder {
+	/**
+	 * Adds a new subcommand group to this command
+	 *
+	 * @param input - A function that returns a subcommand group builder, or an already built builder
+	 */
+	addSubcommandGroup(
+		input:
+			| SlashCommandSubcommandGroupBuilder
+			| ((
+					subcommandGroup: SlashCommandSubcommandGroupBuilder
+			  ) => SlashCommandSubcommandGroupBuilder)
+	): SlashCommandSubcommandsOnlyBuilder & SLSubCommandsOnly
+
+	/**
+	 * Adds a new subcommand to this command
+	 *
+	 * @param input - A function that returns a subcommand builder, or an already built builder
+	 */
+	addSubcommand(
+		input:
+			| SlashCommandSubcommandBuilder
+			| ((
+					subcommandGroup: SlashCommandSubcommandBuilder
+			  ) => SlashCommandSubcommandBuilder)
+	): SlashCommandSubcommandsOnlyBuilder & SLSubCommandsOnly
+}
 
 export interface SLMessageCommand
 	extends SLBaseCommand,
