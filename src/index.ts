@@ -9,15 +9,12 @@ import {
 	SLEvent,
 } from './structures'
 
-import { mongo, getMongoConnection } from './util/mongo'
-import { HandlerEvents, HandlerOptions } from './types'
-import { Client, IntentsBitField } from 'discord.js'
-import { Validators } from './util/validators'
+import { Validators, FileManager, Logger, Mongo } from './util'
+import { HandlerEvents, HandlerOptions, SLLanguages } from './types'
 import TypedEventEmitter from 'typed-emitter'
-import { FileManager } from './util/files'
-import { Logger } from './util/logger'
 import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
+import { Client } from 'discord.js'
 
 import MessageHandler from './handlers/MessageHandler'
 import CommandHandler from './handlers/CommandHandler'
@@ -33,9 +30,10 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 	private _messagesPath: string = ''
 	private _botDevsIds: string[] = []
 	private _testServersIds: string[] = []
-	private _showWarns: boolean = true
 	private _testOnly: boolean = false
-	private _language: 'pt-br' | 'en-us' = 'en-us'
+	private _showWarns: boolean = true
+	private _useDefaultMessages: boolean = true
+	private _language: SLLanguages = 'en-us'
 	private _mongoConnection: Connection | null = null
 	private _messageHandler: MessageHandler = undefined!
 	private _commandHandler: CommandHandler = undefined!
@@ -50,9 +48,7 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 	constructor(options: HandlerOptions) {
 		super()
 
-		this._client = new Client(
-			options.clientOptions || { intents: [IntentsBitField.Flags.Guilds] }
-		)
+		this._client = new Client(options.clientOptions ?? { intents: ['Guilds'] })
 
 		Validators.handlerOptionsCheck(options)
 		this.setUp(options)
@@ -60,28 +56,25 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 
 	private async setUp(options: HandlerOptions) {
 		let {
-			messagesPath = '',
-			featuresDir = '',
-			commandsDir = '',
-			eventsDir = '',
-			botToken = '',
+			messagesPath,
+			featuresDir,
+			commandsDir,
+			eventsDir,
+			botToken,
 			testServersIds,
 			botDevsIds,
 			dbOptions,
 			mongoUri,
-			language = 'en-us',
-			showWarns = true,
-			testOnly = false,
-		} = options || {}
+			language,
+			testOnly,
+			showWarns,
+			useDefaultMessages,
+		} = options ?? {}
 
 		if (mongoUri) {
-			await mongo(this, mongoUri, dbOptions)
+			await new Mongo(this, mongoUri, dbOptions).connect()
 
-			this._mongoConnection = getMongoConnection()
-		} else {
-			if (showWarns) {
-				Logger.warn('SLCommands > No MongoDB connection URI provided.')
-			}
+			this._mongoConnection = Mongo.getConnection()
 		}
 
 		if (testServersIds) {
@@ -94,20 +87,22 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 			this._botDevsIds = botDevsIds
 		}
 
-		this._messagesPath = messagesPath
-		this._featuresDir = featuresDir
-		this._commandsDir = commandsDir
-		this._eventsDir = eventsDir
-		this._showWarns = showWarns
-		this._testOnly = testOnly
-		this._language = language
+		this._messagesPath = messagesPath ?? ''
+		this._featuresDir = featuresDir ?? ''
+		this._commandsDir = commandsDir ?? ''
+		this._eventsDir = eventsDir ?? ''
+		this._testOnly = testOnly ?? false
+		this._showWarns = showWarns ?? true
+		this._useDefaultMessages = useDefaultMessages ?? true
+		this._language = language ?? 'en-us'
 		this._token = botToken
 
-		if (showWarns) {
+		if (this._showWarns) {
 			let props: (keyof HandlerOptions)[] = [
 				'commandsDir',
 				'featuresDir',
 				'eventsDir',
+				'mongoUri',
 			]
 
 			for (let prop of props) {
@@ -188,6 +183,11 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 		return this._botDevsIds
 	}
 
+	/** If useDefaultMessages is enabled */
+	public get useDefaultMessages() {
+		return this._useDefaultMessages
+	}
+
 	/** If global testOnly is enabled */
 	public get testOnly() {
 		return this._testOnly
@@ -209,6 +209,12 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 	}
 }
 
+const SLUtil = {
+	Logger,
+	Validators,
+	FileManager,
+}
+
 export default SLHandler
 
 export {
@@ -220,9 +226,7 @@ export {
 	SLFeature,
 	SLEmbed,
 	SLEvent,
-	Logger,
-	Validators,
-	FileManager,
+	SLUtil,
 }
 
 module.exports = Object.assign(SLHandler, {
@@ -233,7 +237,5 @@ module.exports = Object.assign(SLHandler, {
 	SLFeature,
 	SLEmbed,
 	SLEvent,
-	Logger,
-	Validators,
-	FileManager,
+	SLUtil,
 })
