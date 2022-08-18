@@ -7,9 +7,8 @@ import {
 } from '../structures'
 
 import CommandListener from '../CommandListener'
-import { FileManager } from '../util/files'
+import { FileManager, Logger } from '../util'
 import { Collection } from 'discord.js'
-import { Logger } from '../util/logger'
 import { existsSync } from 'fs'
 import SLHandler from '..'
 
@@ -27,7 +26,7 @@ class CommandHandler {
 
 		try {
 			this.load(handler, dir)
-			new CommandListener().setUp(handler, this._commands, this._subcommands)
+			new CommandListener(handler, this._commands, this._subcommands)
 		} catch (e) {
 			Logger.error(`Ocurred an error while loading commands.\n`, e)
 		}

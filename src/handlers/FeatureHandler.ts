@@ -1,6 +1,5 @@
-import { FileManager } from '../util/files';
+import { FileManager, Logger } from '../util'
 import SLHandler, { SLFeature } from '..'
-import { Logger } from '../util/logger';
 import { Collection } from 'discord.js'
 import { existsSync } from 'fs'
 

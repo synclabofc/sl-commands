@@ -1,5 +1,5 @@
-import { Validators } from '../util/validators'
 import messages from '../messages.json'
+import { Validators } from '../util'
 
 class MessageHandler {
 	private messagesPath: string
