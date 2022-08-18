@@ -14,7 +14,6 @@ import {
 } from './types'
 
 import SLHandler, { SLCommand, SLSubCommand } from '.'
-import MessageHandler from './handlers/MessageHandler';
 import perms from './permissions.json'
 
 type SCollection = Collection<string, SLSubCommand>
@@ -23,7 +22,11 @@ type OptRsvlr = CommandInteractionOptionResolver
 type MissingTuple = [string[], 'User' | 'Bot']
 
 class CommandListener {
-	setUp(handler: SLHandler, commands: CCollection, subcommands: SCollection) {
+	constructor(
+		public handler: SLHandler,
+		commands: CCollection,
+		subcommands: SCollection
+	) {
 		handler.client.on('interactionCreate', async raw => {
 			if (!raw.isChatInputCommand() && !raw.isContextMenuCommand()) return
 
@@ -35,10 +38,13 @@ class CommandListener {
 			const { member, guild, user, channel, locale, options } = interaction
 			const callback = command.callback as CommandCallback
 
-			let check = await this.isAvailable(interaction, command, handler)
+			let check = await this.isAvailable(interaction, command)
 
 			if (check) {
-				interaction.reply(check)
+				if (check !== true) {
+					interaction.reply(check)
+				}
+
 				return
 			}
 
@@ -86,6 +92,10 @@ class CommandListener {
 			try {
 				await callback(cbObject)
 			} catch (err) {
+				if (!(err instanceof Error)) {
+					err = new Error(String(err))
+				}
+
 				handler.emit(
 					'commandException',
 					command.name ?? 'unknown',
@@ -97,11 +107,21 @@ class CommandListener {
 	}
 
 	private async isAvailable(
-		{ user, member, guild }: SLInteraction,
-		{ devsOnly, permissions }: SLCommand,
-		{ language, botDevsIds = [], messageHandler }: SLHandler
+		interaction: SLInteraction,
+		{ devsOnly, permissions }: SLCommand
 	) {
+		let { language, botDevsIds, messageHandler, useDefaultMessages } =
+			this.handler
+
+		let { user, member, guild, commandName } = interaction
+
 		if (devsOnly && !botDevsIds.includes(user.id)) {
+			if (!useDefaultMessages) {
+				this.handler.emit('commandDevsOnly', interaction)
+
+				return true
+			}
+
 			return {
 				content: messageHandler.getMessage('DevsOnly', language),
 				ephemeral: true,
@@ -112,20 +132,20 @@ class CommandListener {
 			return this.missingPermissions(
 				await guild.members.fetchMe(),
 				member,
-				messageHandler,
 				permissions,
+				interaction,
 				language
 			)
 		}
 
-		return null
+		return
 	}
 
 	private missingPermissions(
 		bot: GuildMember,
 		member: GuildMember,
-		handler: MessageHandler,
 		required: SLPermission[],
+		interaction: SLInteraction,
 		language: SLLanguages
 	) {
 		const getMissing = (m: GuildMember) =>
@@ -144,18 +164,37 @@ class CommandListener {
 			missing[0] = [adminString]
 		}
 
+		if (!missing[0].length) {
+			return
+		}
+
+		if (!this.handler.useDefaultMessages) {
+			this.handler.emit('commandMissingPermissions', interaction, {
+				translatedPermissions: missing[0],
+				missingPermissions: missing[0].map(
+					e => Object.entries(perms[language]).find(([k, v]) => v === e)![0]
+				) as SLPermission[],
+				member: missing[1] === 'User' ? member : undefined,
+				bot: missing[1] === 'Bot' ? bot : undefined,
+			})
+
+			return true
+		}
+
 		const strings = this.getStrings(missing[0])
 
-		return missing[0].length
-			? {
-					content: handler.getMessage(`${missing[1]}Perms`, language, {
-						PERMISSIONS: `${strings}`,
-						S: strings.s,
-						A: strings.a,
-					}),
-					ephemeral: true,
-			  }
-			: null
+		return {
+			content: this.handler.messageHandler.getMessage(
+				`${missing[1]}Perms`,
+				language,
+				{
+					PERMISSIONS: `${strings}`,
+					S: strings.s,
+					A: strings.a,
+				}
+			),
+			ephemeral: true,
+		}
 	}
 
 	private getStrings(array: string[]) {
