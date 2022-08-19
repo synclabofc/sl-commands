@@ -79,15 +79,6 @@ export type HandlerEvents = {
 		error: Error,
 		interaction: SLInteraction | undefined
 	) => any
-	commandMissingPermissions: (
-		interaction: SLInteraction,
-		details: {
-			bot?: GuildMember
-			member?: GuildMember
-			missingPermissions: SLPermission[]
-			translatedPermissions: string[]
-		}
-	) => any
 }
 
 export interface HandlerOptions {
@@ -141,7 +132,7 @@ export interface HandlerOptions {
 
 	/**
 	 * Whether or not to use the default replies for DevsOnly & Permissions handlers.
-	 * If it is disabled the events `commandDevsOnly` and `commandMissingPermissions` will be emitted instead of the default replying.
+	 * If it is disabled the event `commandDevsOnly` will be emitted instead of the default replying.
 	 * @default true
 	 */
 	useDefaultMessages?: boolean

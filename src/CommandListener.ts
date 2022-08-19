@@ -109,100 +109,26 @@ class CommandListener {
 
 	private async isAvailable(
 		interaction: SLInteraction,
-		{ devsOnly, permissions }: SLCommand
+		{ devsOnly }: SLCommand
 	) {
 		let { language, botDevsIds, messageHandler, useDefaultMessages } =
 			this.handler
 
-		let { user, member, guild, commandName } = interaction
+		let { user } = interaction
 
-		if (devsOnly && !botDevsIds.includes(user.id)) {
-			if (!useDefaultMessages) {
-				this.handler.emit('commandDevsOnly', interaction)
-
-				return true
-			}
-
-			return {
-				content: messageHandler.getMessage('DevsOnly', language),
-				ephemeral: true,
-			}
-		}
-
-		if (guild && permissions.length) {
-			return this.missingPermissions(
-				await guild.members.fetchMe(),
-				member,
-				permissions,
-				interaction,
-				language
-			)
-		}
-
-		return
-	}
-
-	private missingPermissions(
-		bot: GuildMember,
-		member: GuildMember,
-		required: SLPermission[],
-		interaction: SLInteraction,
-		language: SLLanguages
-	) {
-		const getMissing = (m: GuildMember) =>
-			m.permissions
-				.missing(required, true)
-				.map(e => perms[language][e as SLPermission])
-
-		let missing: MissingTuple = [getMissing(member), 'User']
-		let adminString = perms[language]['Administrator']
-
-		if (!missing[0].length) {
-			missing = [getMissing(bot), 'Bot']
-		}
-
-		if (missing[0].includes(adminString)) {
-			missing[0] = [adminString]
-		}
-
-		if (!missing[0].length) {
+		if (!(devsOnly && !botDevsIds.includes(user.id))) {
 			return
 		}
 
-		if (!this.handler.useDefaultMessages) {
-			this.handler.emit('commandMissingPermissions', interaction, {
-				translatedPermissions: missing[0],
-				missingPermissions: missing[0].map(
-					e => Object.entries(perms[language]).find(([k, v]) => v === e)![0]
-				) as SLPermission[],
-				member: missing[1] === 'User' ? member : undefined,
-				bot: missing[1] === 'Bot' ? bot : undefined,
-			})
+		if (!useDefaultMessages) {
+			this.handler.emit('commandDevsOnly', interaction)
 
 			return true
 		}
 
-		const strings = this.getStrings(missing[0])
-
 		return {
-			content: this.handler.messageHandler.getMessage(
-				`${missing[1]}Perms`,
-				language,
-				{
-					PERMISSIONS: `${strings}`,
-					S: strings.s,
-					A: strings.a,
-				}
-			),
+			content: messageHandler.getMessage('DevsOnly', language),
 			ephemeral: true,
-		}
-	}
-
-	private getStrings(array: string[]) {
-		return {
-			s: array.length > 1 ? 's' : '',
-			a: array.length > 1 ? 'ões' : 'ão',
-			toString: () => `\`${array.join(', ')}\``,
 		}
 	}
 }

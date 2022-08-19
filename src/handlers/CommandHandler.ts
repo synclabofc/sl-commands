@@ -8,7 +8,7 @@ import {
 
 import CommandListener from '../CommandListener'
 import { FileManager, Logger } from '../util'
-import { Collection } from 'discord.js'
+import { BitField, Collection, PermissionFlagsBits } from 'discord.js'
 import { existsSync } from 'fs'
 import SLHandler from '..'
 
@@ -54,6 +54,18 @@ class CommandHandler {
 			} else {
 				if (!('testOnly' in command)) {
 					Reflect.set(command, 'testOnly', handler.testOnly)
+				}
+
+				if (command.permissions.length) {
+					command
+						.setDMPermission(false)
+						.setDefaultMemberPermissions(
+							BigInt(
+								command.permissions
+									.map(Permission => PermissionFlagsBits[Permission])
+									.reduce((a, b) => a | b)
+							)
+						)
 				}
 
 				this._commands.set(command.name, command)

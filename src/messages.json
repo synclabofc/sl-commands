@@ -2,13 +2,5 @@
 	"DevsOnly": {
 		"pt-br": "Este comando apenas pode ser utilizado pelos meus desenvolvedores.",
 		"en-us": "This command can only be used by my developers."
-	},
-	"BotPerms": {
-		"pt-br": "Eu preciso da{S} permiss{A} {PERMISSIONS} para executar este comando.",
-		"en-us": "I need the permission{S} {PERMISSIONS} to execute this command."
-	},
-	"UserPerms": {
-		"pt-br": "Você precisa da{S} permiss{A} {PERMISSIONS} para utilizar este comando.",
-		"en-us": "You need the permission{S} {PERMISSIONS} to use this command."
 	}
 }
