@@ -8,7 +8,7 @@
 		"latest": "pnpm build && pnpm publish && git push",
 		"beta": "pnpm version patch && pnpm build && pnpm publish --tag beta && git push",
 		"test": "prettier -w test/**/*.ts && cls && ts-node-dev test/index.test.ts",
-		"build": "tsc && prettier -w src/**/*.ts && cls"
+		"build": "tsc && cls"
 	},
 	"keywords": [
 		"discord",
