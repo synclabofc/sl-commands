@@ -33,7 +33,7 @@
 		"typed-emitter": "^2.1.0"
 	},
 	"devDependencies": {
-		"@types/node": "^18.7.3",
+		"@types/node": "^18.7.6",
 		"prettier": "^2.7.1",
 		"ts-node": "^10.9.1",
 		"ts-node-dev": "^2.0.0",
