@@ -9,11 +9,11 @@
 
 # **About**
 
-SLCommands is a command, context, and event handler made by **bluey#0012**. The goal of this package is to make your Discord Bot developer's life easier.
+SLCommands is a command, context, feature, and event handler made by **bluey#0012**. The goal of this package is to make your Discord Bot developer's life easier.
 
 # **Documentation**
 
-The official documentation can be found here: https://synclab.gitbook.io/slcommands/
+The official documentation can be found here: https://synclab.gitbook.io/slcommands-beta/
 
 # **Installation**
 
