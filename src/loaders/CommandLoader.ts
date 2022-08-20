@@ -65,10 +65,7 @@ class CommandHandler {
 		this._commands = commands
 		this._subcommands = subcommands
 
-		Logger.tag(
-			'COMMANDS',
-			`Loaded ${commandFiles.length} command files.`
-		)
+		Logger.tag('COMMANDS', `Loaded ${commandFiles.length} command files.`)
 
 		handler.client.once('ready', () => this.registerCommands(handler))
 	}
