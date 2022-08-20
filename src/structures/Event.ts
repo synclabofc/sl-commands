@@ -1,8 +1,11 @@
+import EventManager from '../managers/EventManager'
 import { Client, ClientEvents } from 'discord.js'
-import SLHandler from '..'
 import { HandlerEvents } from '../types'
+import SLHandler from '..'
 
-export class SLEvent<K extends keyof HandlerEvents | keyof ClientEvents> {
+type EventKey = keyof HandlerEvents | keyof ClientEvents
+
+export class SLEvent<K extends EventKey = EventKey> {
 	/**
 	 * Creates a SLEvent
 	 *
@@ -29,5 +32,7 @@ export class SLEvent<K extends keyof HandlerEvents | keyof ClientEvents> {
 				'SLHandler > You must provide name and callback for every event.'
 			)
 		}
+
+		EventManager.registerEvent(this as any)
 	}
 }

@@ -52,7 +52,7 @@ export type SLInteraction<T extends CommandType = CommandType> =
 		member: GuildMember
 	}
 
-export type CommandCallbackObject<T extends CommandType = CommandType> =
+export type CommandExecuteObject<T extends CommandType = CommandType> =
 	CommandTypes[T]['callback'] & {
 		interaction: CommandTypes[T]['interaction']
 		handler: SLHandler
@@ -63,8 +63,8 @@ export type CommandCallbackObject<T extends CommandType = CommandType> =
 		user: User
 	}
 
-export type CommandCallback<T extends CommandType = CommandType> = (
-	object: CommandCallbackObject<T>
+export type CommandExecute<T extends CommandType = CommandType> = (
+	object: CommandExecuteObject<T>
 ) => any
 
 export type SLPermission = keyof typeof permissions['en-us']
@@ -79,6 +79,7 @@ export type HandlerEvents = {
 		error: Error,
 		interaction: SLInteraction | undefined
 	) => any
+	handlerReady: () => any
 }
 
 export interface HandlerOptions {
@@ -101,51 +102,51 @@ export interface HandlerOptions {
 	mongoUri?: string
 
 	/**
-	 * Test only commands will be registered in the guild(s) listed here
-	 * @default []
+	 * Test only commands will be registered in the guild(s) listed heren
+	 * - Defaults to `[]`
 	 */
 	testServersIds?: string | string[]
 
 	/**
 	 * Users in this list will be able to use `devsOnly` commands
-	 * @default []
+	 * - Defaults to `[]`
 	 */
 	botDevsIds?: string | string[]
 
 	/**
 	 * The default language for your Bot
-	 * @default 'en-us'
+	 * - Defaults to `'en-us'`
 	 */
 	language?: SLLanguages
 
 	/**
 	 * The DiscordJS Client options
-	 * @default { intents: ['Guilds'] }
+	 * - Defaults to `{ intents: ['Guilds'] }`
 	 */
 	clientOptions?: ClientOptions
 
 	/**
 	 * The Mongoose connection options
-	 * @default {}
+	 * - Defaults to `{}`
 	 */
 	dbOptions?: ConnectOptions
 
 	/**
 	 * Whether or not to use the default replies for DevsOnly & Permissions handlers.
 	 * If it is disabled the event `commandDevsOnly` will be emitted instead of the default replying.
-	 * @default true
+	 * - Defaults to `true`
 	 */
 	useDefaultMessages?: boolean
 
 	/**
 	 * Whether the handler should show warns or not
-	 * @default true
+	 * - Defaults to `true`
 	 */
 	showWarns?: boolean
 
 	/**
 	 * The default testOnly value for commands
-	 * @default false
+	 * - Defaults to `false`
 	 */
 	testOnly?: boolean
 }

@@ -5,21 +5,12 @@ import {
 	Message,
 } from 'discord.js'
 
-import {
-	CommandCallbackObject,
-	CommandCallback,
-	SLInteraction,
-	SLPermission,
-	SLLanguages,
-} from './types'
-
+import { CommandExecuteObject, CommandExecute, SLInteraction } from './types'
 import SLHandler, { SLCommand, SLSubCommand } from '.'
-import perms from './permissions.json'
 
 type SCollection = Collection<string, SLSubCommand>
 type CCollection = Collection<string, SLCommand>
 type OptRsvlr = CommandInteractionOptionResolver
-type MissingTuple = [string[], 'User' | 'Bot']
 
 class CommandListener {
 	constructor(
@@ -47,7 +38,9 @@ class CommandListener {
 				return
 			}
 
-			let cbObject: CommandCallbackObject = {
+			let execute = command.executeFunction as CommandExecute
+
+			let cbObject: CommandExecuteObject = {
 				client: handler.client,
 				options: undefined!,
 				channel: undefined!,
@@ -60,13 +53,17 @@ class CommandListener {
 			}
 
 			if (interaction.isChatInputCommand()) {
+				const { commandName } = interaction
+
 				const subCommand = subcommands.find(s =>
 					options.data.some(
-						({ name }) => s.name === interaction.commandName + ' ' + name
+						({ name }) => s.name === name && s.reference === commandName
 					)
 				)
 
 				if (subCommand) {
+					execute = subCommand.executeFunction as CommandExecute
+
 					cbObject = Object.assign(cbObject, {
 						options: options as OptRsvlr,
 						channel: channel!,
@@ -89,9 +86,7 @@ class CommandListener {
 			}
 
 			try {
-				const callback = command.callback as CommandCallback
-
-				await callback(cbObject)
+				await execute(cbObject)
 			} catch (err) {
 				if (!(err instanceof Error)) {
 					err = new Error(String(err))

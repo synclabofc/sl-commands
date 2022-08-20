@@ -7,7 +7,8 @@ import {
 	SlashCommandBuilder,
 } from 'discord.js'
 
-import { CommandCallback, SLPermission } from '../types'
+import CommandManager from '../managers/CommandManager'
+import { CommandExecute, SLPermission } from '../types'
 import { Validators } from '../util'
 import { mix } from 'ts-mixer'
 
@@ -54,7 +55,7 @@ export class SLBaseCommand {
 	}
 
 	/**
-	 * Sets the required permissions for using this command
+	 * Sets the required permissions for using this commandHandler
 	 *
 	 * @param permissions - The permissions' names
 	 */
@@ -69,23 +70,62 @@ export class SLBaseCommand {
 }
 
 @mix(SLBaseCommand, SlashCommandBuilder)
-export class SLChatInputCommand {
+export class SLChatInputCommand extends SlashCommandBuilder {
 	/**
 	 * What is going to happen when someone use this command
 	 */
-	readonly callback: CommandCallback<'CHAT_INPUT'> = undefined!
+	readonly executeFunction: CommandExecute<'CHAT_INPUT'> = undefined!
 
 	/**
 	 * Sets what happens whenever the command is used by some user
 	 *
-	 * @param callback - The function which will be executed
+	 * @param executeFunction - The function which will be executed
 	 */
-	onExecute(callback: CommandCallback<'CHAT_INPUT'>) {
-		Validators.functionCheck(callback)
+	onExecute(executeFunction: CommandExecute<'CHAT_INPUT'>) {
+		Validators.functionCheck(executeFunction)
 
-		Reflect.set(this, 'callback', callback)
+		Reflect.set(this, 'executeFunction', executeFunction)
+
+		CommandManager.registerCommand(this)
 
 		return this
+	}
+
+	/**
+	 * Adds a new subcommand group to this command
+	 *
+	 * @param input - A function that returns a subcommand group builder, or an already built builder
+	 */
+	addSubcommandGroup(
+		input:
+			| SlashCommandSubcommandGroupBuilder
+			| ((
+					subcommandGroup: SlashCommandSubcommandGroupBuilder
+			  ) => SlashCommandSubcommandGroupBuilder)
+	) {
+		CommandManager.registerCommand(this)
+
+		return super.addSubcommandGroup(
+			input
+		) as SlashCommandSubcommandsOnlyBuilder & SLSubCommandsOnly
+	}
+
+	/**
+	 * Adds a new subcommand to this command
+	 *
+	 * @param input - A function that returns a subcommand builder, or an already built builder
+	 */
+	addSubcommand(
+		input:
+			| SlashCommandSubcommandBuilder
+			| ((
+					subcommandGroup: SlashCommandSubcommandBuilder
+			  ) => SlashCommandSubcommandBuilder)
+	) {
+		CommandManager.registerCommand(this)
+
+		return super.addSubcommand(input) as SlashCommandSubcommandsOnlyBuilder &
+			SLSubCommandsOnly
 	}
 }
 
@@ -94,7 +134,7 @@ export class SLMessageCommand {
 	/**
 	 * What is going to happen when someone use this command
 	 */
-	readonly callback: CommandCallback<'MESSAGE'> = undefined!
+	readonly executeFunction: CommandExecute<'MESSAGE'> = undefined!
 
 	/**
 	 * The type of this context menu command
@@ -104,12 +144,14 @@ export class SLMessageCommand {
 	/**
 	 * Sets what happens whenever the command is used by some user
 	 *
-	 * @param callback - The function which will be executed
+	 * @param executeFunction - The function which will be executed
 	 */
-	onExecute(callback: CommandCallback<'MESSAGE'>) {
-		Validators.functionCheck(callback)
+	onExecute(executeFunction: CommandExecute<'MESSAGE'>) {
+		Validators.functionCheck(executeFunction)
 
-		Reflect.set(this, 'callback', callback)
+		Reflect.set(this, 'executeFunction', executeFunction)
+
+		CommandManager.registerCommand(this)
 
 		return this
 	}
@@ -127,7 +169,7 @@ export class SLUserCommand {
 	/**
 	 * What is going to happen when someone use this command
 	 */
-	readonly callback: CommandCallback<'USER'> = undefined!
+	readonly executeFunction: CommandExecute<'USER'> = undefined!
 
 	/**
 	 * The type of this context menu command
@@ -137,12 +179,14 @@ export class SLUserCommand {
 	/**
 	 * Sets what happens whenever the command is used by some user
 	 *
-	 * @param callback - The function which will be executed
+	 * @param executeFunction - The function which will be executed
 	 */
-	onExecute(callback: CommandCallback<'USER'>) {
-		Validators.functionCheck(callback)
+	onExecute(executeFunction: CommandExecute<'USER'>) {
+		Validators.functionCheck(executeFunction)
 
-		Reflect.set(this, 'callback', callback)
+		Reflect.set(this, 'executeFunction', executeFunction)
+
+		CommandManager.registerCommand(this)
 
 		return this
 	}
@@ -169,7 +213,7 @@ export class SLSubCommand {
 	/**
 	 * What is going to happen when someone use this command
 	 */
-	readonly callback: CommandCallback<'SUB_COMMAND'> = undefined!
+	readonly executeFunction: CommandExecute<'SUB_COMMAND'> = undefined!
 
 	/**
 	 * Sets the name
@@ -200,12 +244,14 @@ export class SLSubCommand {
 	/**
 	 * Sets what happens whenever the command is used by some user
 	 *
-	 * @param callback - The function which will be executed
+	 * @param executeFunction - The function which will be executed
 	 */
-	onExecute(callback: CommandCallback<'CHAT_INPUT'>) {
-		Validators.functionCheck(callback)
+	onExecute(executeFunction: CommandExecute<'CHAT_INPUT'>) {
+		Validators.functionCheck(executeFunction)
 
-		Reflect.set(this, 'callback', callback)
+		Reflect.set(this, 'executeFunction', executeFunction)
+
+		CommandManager.registerCommand(this)
 
 		return this
 	}

@@ -1,3 +1,4 @@
+import FeatureManager from '../managers/FeatureManager'
 import { s } from '@sapphire/shapeshift'
 import { Client } from 'discord.js'
 import SLHandler from '..'
@@ -6,29 +7,24 @@ function checkNumber(value: unknown): asserts value is number {
 	s.number.parse(value)
 }
 
-export type FeatureCallback = (ctx: {
+export type FeatureFunction = (ctx: {
 	client: Client
 	handler: SLHandler
 }) => any
 
+export type TimedFunction = {
+	timedFunction: FeatureFunction
+	interval: number
+}
+
 export class SLFeature {
-	/**
-	 * The initialization function
-	 */
-	readonly initFunction?: FeatureCallback
-
-	/**
-	 * The timed functions
-	 */
-	readonly timeFunctions: { callback: FeatureCallback; interval: number }[] = []
-
 	/**
 	 * Will executed once when the handler starts
 	 *
-	 * @param callback - The function which will be executed
+	 * @param initFunction - The function which will be executed
 	 */
-	setInit(callback: FeatureCallback) {
-		Reflect.set(this, 'initFunction', callback)
+	setInit(initFunction: FeatureFunction) {
+		FeatureManager.registerFunction(initFunction)
 
 		return this
 	}
@@ -36,13 +32,13 @@ export class SLFeature {
 	/**
 	 * Adds a new timed function which will be executed according to the provided interval
 	 *
-	 * @param callback - The function which will be executed
+	 * @param timedFunction - The function which will be executed
 	 * @param interval - How much time to wait before running again in milliseconds
 	 */
-	addTimed(callback: FeatureCallback, interval: number) {
+	addTimed(timedFunction: FeatureFunction, interval: number) {
 		checkNumber(interval)
 
-		this.timeFunctions.push({ callback, interval })
+		FeatureManager.registerFunction({ timedFunction, interval })
 
 		return this
 	}

@@ -1,12 +1,11 @@
-import { ClientEvents, Collection } from 'discord.js'
+import EventManager from '../managers/EventManager'
 import { FileManager, Logger } from '../util'
+import { ClientEvents } from 'discord.js'
 import { HandlerEvents } from '../types'
-import SLHandler, { SLEvent } from '..'
 import { existsSync } from 'fs'
+import SLHandler from '..'
 
 class EventHandler {
-	private _events: SLEvent<keyof ClientEvents | keyof HandlerEvents>[] = []
-
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return
 
@@ -18,24 +17,21 @@ class EventHandler {
 		try {
 			this.load(handler, dir)
 		} catch (e) {
-			Logger.error(`Ocurred an error while loading events.\n`, e)
+			Logger.error(`An error occured while loading events.\n`, e)
 		}
 	}
 
 	private load(handler: SLHandler, dir: string) {
-		const { client } = handler
 		const eventFiles = FileManager.getAllFiles(dir)
+		const { client } = handler
 
 		for (const file of eventFiles) {
-			const event: SLEvent<keyof ClientEvents | keyof HandlerEvents> =
-				FileManager.import(file)
+			FileManager.import(file)
+		}
 
-			if (!event || !(event instanceof SLEvent)) {
-				continue
-			}
+		const { events } = EventManager
 
-			this._events.push(event)
-
+		for (const event of events) {
 			handler[event.once ? 'once' : 'on'](
 				event.name as keyof HandlerEvents,
 				event.callback.bind(null, { client, handler })
@@ -47,12 +43,7 @@ class EventHandler {
 			)
 		}
 
-		Logger.tag('EVENTS', `Loaded ${this.events.length} events.`)
-	}
-
-	/** The events array */
-	public get events() {
-		return this._events
+		Logger.tag('EVENTS', `Loaded ${eventFiles.length} event files.`)
 	}
 }
 

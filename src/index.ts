@@ -16,10 +16,10 @@ import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
 import { Client } from 'discord.js'
 
-import MessageHandler from './handlers/MessageHandler'
-import CommandHandler from './handlers/CommandHandler'
-import FeatureHandler from './handlers/FeatureHandler'
-import EventHandler from './handlers/EventHandler'
+import MessageHandler from './MessageHandler'
+import CommandLoader from './loaders/CommandLoader'
+import FeatureLoader from './loaders/FeatureLoader'
+import EventLoader from './loaders/EventLoader'
 
 class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEvents>) {
 	private _client: Client
@@ -36,9 +36,9 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 	private _language: SLLanguages = 'en-us'
 	private _mongoConnection: Connection | null = null
 	private _messageHandler: MessageHandler = undefined!
-	private _commandHandler: CommandHandler = undefined!
-	private _featureHandler: FeatureHandler = undefined!
-	private _eventHandler: EventHandler = undefined!
+	private _commandLoader: CommandLoader = undefined!
+	private _featureLoader: FeatureLoader = undefined!
+	private _eventLoader: EventLoader = undefined!
 
 	/**
 	 * This will handle commands (slash or context menu), features and events.
@@ -112,12 +112,14 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 			}
 		}
 
-		this._commandHandler = new CommandHandler(this, this._commandsDir)
-		this._featureHandler = new FeatureHandler(this, this._featuresDir)
 		this._messageHandler = new MessageHandler(this._messagesPath)
-		this._eventHandler = new EventHandler(this, this._eventsDir)
+		new CommandLoader(this, this._commandsDir)
+		new FeatureLoader(this, this._featuresDir)
+		new EventLoader(this, this._eventsDir)
 
-		this._client.login(this._token)
+		this._client.login(this._token).then(() => {
+			this.emit('handlerReady')
+		})
 	}
 
 	/**
@@ -158,19 +160,19 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 		return this._messageHandler
 	}
 
-	/** The CommandHandler, you can access the commands collection through this */
-	public get commandHandler() {
-		return this._commandHandler!
+	/** The CommandLoader, you can access the commands collection through this */
+	public get commandLoader() {
+		return this._commandLoader!
 	}
 
-	/** The FeatureHandler, you can access the features collection through this */
-	public get featureHandler() {
-		return this._featureHandler!
+	/** The FeatureLoader, you can access the features collection through this */
+	public get featureLoader() {
+		return this._featureLoader!
 	}
 
-	/** The EventHandler, you can access the events collection through this */
-	public get eventHandler() {
-		return this._eventHandler!
+	/** The EventLoader, you can access the events collection through this */
+	public get eventLoader() {
+		return this._eventLoader!
 	}
 
 	/** The provided test servers */
