@@ -45,7 +45,7 @@ class CommandHandler {
 				)
 			}
 
-			if (!('testOnly' in command)) {
+			if (command.testOnly === undefined) {
 				command.setTestOnly(handler.testOnly)
 			}
 
