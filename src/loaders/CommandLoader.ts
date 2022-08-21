@@ -35,7 +35,7 @@ class CommandHandler {
 
 		const { commands, subcommands } = CommandManager
 
-		commands.map(command => {
+		this.commands = commands.mapValues(command => {
 			if (
 				!command.executeFunction &&
 				!subcommands.find(s => s.reference === command.name)
@@ -46,7 +46,7 @@ class CommandHandler {
 			}
 
 			if (!('testOnly' in command)) {
-				Reflect.set(command, 'testOnly', handler.testOnly)
+				command.setTestOnly(handler.testOnly)
 			}
 
 			if (command.permissions.length) {
@@ -60,9 +60,10 @@ class CommandHandler {
 						)
 					)
 			}
+
+			return command
 		})
 
-		this.commands = commands
 		this.subcommands = subcommands
 
 		Logger.tag('COMMANDS', `Loaded ${commandFiles.length} command files.`)
