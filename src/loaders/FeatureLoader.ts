@@ -1,9 +1,13 @@
+import { FeatureFunction, TimedFunction } from '../structures'
 import FeatureManager from '../managers/FeatureManager'
 import { FileManager, Logger } from '../util'
 import { existsSync } from 'fs'
 import SLHandler from '..'
 
 class FeatureHandler {
+	initFunctions: FeatureFunction[] = []
+	timedFunctions: TimedFunction[] = []
+
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return
 
@@ -41,6 +45,9 @@ class FeatureHandler {
 				}, interval)
 			}
 		})
+
+		this.initFunctions = initFunctions
+		this.timedFunctions = timedFunctions
 
 		Logger.tag('FEATURES', `Loaded ${featureFiles.length} feature files.`)
 	}

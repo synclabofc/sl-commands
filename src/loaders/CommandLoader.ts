@@ -7,8 +7,8 @@ import { existsSync } from 'fs'
 import SLHandler from '..'
 
 class CommandHandler {
-	private _commands = new Collection<string, SLCommand>()
-	private _subcommands = new Collection<string, SLSubCommand>()
+	commands = new Collection<string, SLCommand>()
+	subcommands = new Collection<string, SLSubCommand>()
 
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return
@@ -20,7 +20,7 @@ class CommandHandler {
 
 		try {
 			this.load(handler, dir)
-			new CommandListener(handler, this._commands, this._subcommands)
+			new CommandListener(handler, this.commands, this.subcommands)
 		} catch (e) {
 			Logger.error(`An error occurred while loading commands.\n`, e)
 		}
@@ -62,8 +62,8 @@ class CommandHandler {
 			}
 		})
 
-		this._commands = commands
-		this._subcommands = subcommands
+		this.commands = commands
+		this.subcommands = subcommands
 
 		Logger.tag('COMMANDS', `Loaded ${commandFiles.length} command files.`)
 
@@ -71,7 +71,7 @@ class CommandHandler {
 	}
 
 	private async registerCommands(handler: SLHandler) {
-		const register = this._commands.toJSON()
+		const register = this.commands.toJSON()
 
 		const global = register.filter(c => !c.testOnly),
 			test = register.filter(c => c.testOnly)

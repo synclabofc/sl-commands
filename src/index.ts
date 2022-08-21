@@ -113,9 +113,9 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 		}
 
 		this._messageHandler = new MessageHandler(this._messagesPath)
-		new CommandLoader(this, this._commandsDir)
+		this._commandLoader = new CommandLoader(this, this._commandsDir)
+		this._eventLoader = new EventLoader(this, this._eventsDir)
 		new FeatureLoader(this, this._featuresDir)
-		new EventLoader(this, this._eventsDir)
 
 		this._client.login(this._token).then(() => {
 			this.emit('handlerReady')
@@ -160,14 +160,9 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 		return this._messageHandler
 	}
 
-	/** The CommandLoader, you can access the commands collection through this */
+	/** The CommandLoader, you can access the commands array through this */
 	public get commandLoader() {
 		return this._commandLoader!
-	}
-
-	/** The FeatureLoader, you can access the features collection through this */
-	public get featureLoader() {
-		return this._featureLoader!
 	}
 
 	/** The EventLoader, you can access the events collection through this */

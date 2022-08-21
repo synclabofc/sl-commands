@@ -2,10 +2,13 @@ import EventManager from '../managers/EventManager'
 import { FileManager, Logger } from '../util'
 import { ClientEvents } from 'discord.js'
 import { HandlerEvents } from '../types'
+import { SLEvent } from '../structures'
 import { existsSync } from 'fs'
 import SLHandler from '..'
 
 class EventHandler {
+	events: SLEvent[] = []
+
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return
 
@@ -42,6 +45,8 @@ class EventHandler {
 				event.callback.bind(null, { client, handler })
 			)
 		}
+
+		this.events = events
 
 		Logger.tag('EVENTS', `Loaded ${eventFiles.length} event files.`)
 	}
