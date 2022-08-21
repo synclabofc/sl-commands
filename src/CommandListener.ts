@@ -68,6 +68,11 @@ class CommandListener {
 						options: options as OptRsvlr,
 						channel: channel!,
 					})
+				} else {
+					cbObject = Object.assign(cbObject, {
+						options: options as OptRsvlr,
+						channel: channel!,
+					})
 				}
 			} else if (interaction.isUserContextMenuCommand()) {
 				cbObject = Object.assign(cbObject, {
@@ -76,11 +81,6 @@ class CommandListener {
 			} else if (interaction.isMessageContextMenuCommand()) {
 				cbObject = Object.assign(cbObject, {
 					target: interaction.targetMessage as Message,
-					channel: channel!,
-				})
-			} else {
-				cbObject = Object.assign(cbObject, {
-					options: options as OptRsvlr,
 					channel: channel!,
 				})
 			}
