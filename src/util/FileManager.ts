@@ -12,7 +12,7 @@ export class FileManager {
 			if (file.isDirectory()) {
 				resFiles = [...resFiles, ...this.getAllFiles(`${path}/${file.name}`)]
 			} else if (
-				file.name.endsWith('.ts' || '.js') &&
+				(file.name.endsWith('.ts') || file.name.endsWith('.js')) &&
 				!file.name.startsWith('!')
 			) {
 				resFiles.push(`${path}/${file.name}`)
