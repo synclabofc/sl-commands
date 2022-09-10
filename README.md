@@ -1,6 +1,7 @@
 <div align="center">
-	<a href="https://npmjs.com/package/sl-commands"><img src="https://nodeico.herokuapp.com/sl-commands.svg"></a>
+	<a href="https://npmjs.com/package/sl-commands"><img src="https://nodei.co/npm/sl-commands.png?mini=true"></a>
 	<br><br>
+	<a href="https://npmjs.com/package/sl-commands"><img src="https://cdn.discordapp.com/emojis/1009869462540918894.png?quality=lossless"></a>
   <h1><strong>SLCommands</strong></h1>
   <h3><strong>An advanced handler for Discord.js Bots with TypeScript and JavaScript support!</strong></h3><br>
 	<img src="assets/made-with-typescript.svg"> <img src="assets/it-works.-why_.svg">
