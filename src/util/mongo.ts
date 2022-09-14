@@ -24,11 +24,12 @@ export class Mongo {
 
 		await mongoose.connect(this.mongoUri, options)
 
-		const state = results[mongoose.connection?.readyState] || 'Unknown'
+		const { connection } = mongoose
+		const state = results[connection?.readyState] || 'Unknown'
 		this.handler.emit('databaseConnected', connection, state)
 	}
 
 	static getConnection() {
-		return connection
+		return mongoose.connection
 	}
 }
