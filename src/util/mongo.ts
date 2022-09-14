@@ -1,4 +1,4 @@
-import mongoose, { connection } from 'mongoose'
+import mongoose from 'mongoose'
 import SLHandler from '..'
 
 const results = {
@@ -24,7 +24,7 @@ export class Mongo {
 
 		await mongoose.connect(this.mongoUri, options)
 
-		const state = results[connection.readyState] || 'Unknown'
+		const state = results[mongoose.connection?.readyState] || 'Unknown'
 		this.handler.emit('databaseConnected', connection, state)
 	}
 
