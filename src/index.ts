@@ -20,7 +20,7 @@ import CommandLoader from './loaders/CommandLoader'
 import FeatureLoader from './loaders/FeatureLoader'
 import EventLoader from './loaders/EventLoader'
 
-class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEvents>) {
+export default class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEvents>) {
 	private _client: Client
 	private _token: string = ''
 	private _eventsDir: string = ''
@@ -210,8 +210,6 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 	}
 }
 
-export default SLHandler
-
 export {
 	ChatInputCommand,
 	MessageCommand,
@@ -222,14 +220,3 @@ export {
 	Util,
 	SLEmbed,
 }
-
-module.exports = Object.assign(SLHandler, {
-	ChatInputCommand,
-	MessageCommand,
-	UserCommand,
-	SubCommand,
-	Feature,
-	Event,
-	Util,
-	SLEmbed,
-})
