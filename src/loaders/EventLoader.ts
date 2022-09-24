@@ -2,12 +2,12 @@ import EventManager from '../managers/EventManager'
 import { FileManager, Logger } from '../util'
 import { ClientEvents } from 'discord.js'
 import { HandlerEvents } from '../types'
-import { SLEvent } from '../structures'
+import { Event } from '../structures'
 import { existsSync } from 'fs'
 import SLHandler from '..'
 
 class EventHandler {
-	events: SLEvent[] = []
+	events: Event[] = []
 
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return

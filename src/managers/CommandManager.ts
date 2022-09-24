@@ -1,8 +1,8 @@
 import {
-	SLChatInputCommand,
-	SLMessageCommand,
-	SLUserCommand,
-	SLSubCommand,
+	ChatInputCommand,
+	MessageCommand,
+	UserCommand,
+	SubCommand,
 	SLCommand,
 } from '../structures'
 
@@ -10,16 +10,16 @@ import { Collection } from 'discord.js'
 
 class CommandManager {
 	readonly commands = new Collection<string, SLCommand>()
-	readonly subcommands = new Collection<string, SLSubCommand>()
+	readonly subcommands = new Collection<string, SubCommand>()
 
-	registerCommand(command: SLCommand | SLSubCommand) {
+	registerCommand(command: SLCommand | SubCommand) {
 		if (
-			command instanceof SLChatInputCommand ||
-			command instanceof SLMessageCommand ||
-			command instanceof SLUserCommand
+			command instanceof ChatInputCommand ||
+			command instanceof MessageCommand ||
+			command instanceof UserCommand
 		) {
 			this.commands.set(command.name, command)
-		} else if (command instanceof SLSubCommand) {
+		} else if (command instanceof SubCommand) {
 			this.subcommands.set(command.reference + ' ' + command.name, command)
 		}
 	}

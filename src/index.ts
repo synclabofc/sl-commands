@@ -1,16 +1,15 @@
 import {
-	SLChatInputCommand,
-	SLMessageCommand,
-	SLUserCommand,
-	SLSubCommand,
-	SLCommand,
-	SLFeature,
+	ChatInputCommand,
+	MessageCommand,
+	UserCommand,
+	SubCommand,
+	Feature,
+	Event,
 	SLEmbed,
-	SLEvent,
 } from './structures'
 
-import { Validators, FileManager, Logger, Mongo } from './util'
 import { HandlerEvents, HandlerOptions, SLLanguages } from './types'
+import Util, { Validators, Logger, Mongo } from './util'
 import TypedEventEmitter from 'typed-emitter'
 import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
@@ -114,8 +113,8 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 
 		this._messageHandler = new MessageHandler(this._messagesPath)
 		this._commandLoader = new CommandLoader(this, this._commandsDir)
+		this._featureLoader = new FeatureLoader(this, this._featuresDir)
 		this._eventLoader = new EventLoader(this, this._eventsDir)
-		new FeatureLoader(this, this._featuresDir)
 
 		this._client.login(this._token).then(() => {
 			this.emit('handlerReady')
@@ -160,14 +159,19 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 		return this._messageHandler
 	}
 
-	/** The CommandLoader, you can access the commands array through this */
+	/** The CommandLoader, you can access the commands through this */
 	public get commandLoader() {
-		return this._commandLoader!
+		return this._commandLoader
 	}
 
-	/** The EventLoader, you can access the events collection through this */
+	/** The FeatureLoader, you can acess the features' functions through this */
+	public get featureLoader() {
+		return this._featureLoader
+	}
+
+	/** The EventLoader, you can access the events through this */
 	public get eventLoader() {
-		return this._eventLoader!
+		return this._eventLoader
 	}
 
 	/** The provided test servers */
@@ -206,33 +210,26 @@ class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEven
 	}
 }
 
-const SLUtil = {
-	Logger,
-	Validators,
-	FileManager,
-}
-
 export default SLHandler
 
 export {
-	SLChatInputCommand,
-	SLMessageCommand,
-	SLUserCommand,
-	SLSubCommand,
-	SLCommand,
-	SLFeature,
+	ChatInputCommand,
+	MessageCommand,
+	UserCommand,
+	SubCommand,
+	Feature,
+	Event,
+	Util,
 	SLEmbed,
-	SLEvent,
-	SLUtil,
 }
 
 module.exports = Object.assign(SLHandler, {
-	SLChatInputCommand,
-	SLMessageCommand,
-	SLUserCommand,
-	SLSubCommand,
-	SLFeature,
+	ChatInputCommand,
+	MessageCommand,
+	UserCommand,
+	SubCommand,
+	Feature,
+	Event,
+	Util,
 	SLEmbed,
-	SLEvent,
-	SLUtil,
 })

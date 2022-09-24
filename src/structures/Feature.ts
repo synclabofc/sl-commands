@@ -17,7 +17,7 @@ export type TimedFunction = {
 	interval: number
 }
 
-export class SLFeature {
+export class Feature {
 	/**
 	 * Will executed once when the handler starts
 	 *

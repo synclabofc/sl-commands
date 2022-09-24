@@ -5,7 +5,7 @@ import SLHandler from '..'
 
 type EventKey = keyof HandlerEvents | keyof ClientEvents
 
-export class SLEvent<K extends EventKey = EventKey> {
+export class Event<K extends EventKey = EventKey> {
 	/**
 	 * Creates a SLEvent
 	 *

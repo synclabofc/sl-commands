@@ -1,5 +1,5 @@
 import { Collection, PermissionFlagsBits } from 'discord.js'
-import { SLSubCommand, SLCommand } from '../structures'
+import { SubCommand, SLCommand } from '../structures'
 import CommandManager from '../managers/CommandManager'
 import CommandListener from '../CommandListener'
 import { FileManager, Logger } from '../util'
@@ -8,7 +8,7 @@ import SLHandler from '..'
 
 class CommandHandler {
 	commands = new Collection<string, SLCommand>()
-	subcommands = new Collection<string, SLSubCommand>()
+	subcommands = new Collection<string, SubCommand>()
 
 	constructor(handler: SLHandler, dir: string) {
 		if (!dir) return

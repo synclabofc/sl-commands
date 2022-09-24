@@ -1,10 +1,10 @@
-import { SLEvent } from '../structures'
+import { Event } from '../structures'
 
 class EventManager {
-	readonly events: SLEvent[] = []
+	readonly events: Event[] = []
 
-	registerEvent(event: SLEvent) {
-		if (event instanceof SLEvent) {
+	registerEvent(event: Event) {
+		if (event instanceof Event) {
 			this.events.push(event)
 		}
 	}

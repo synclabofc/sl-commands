@@ -12,7 +12,7 @@ import { CommandExecute, SLPermission } from '../types'
 import { Validators } from '../util'
 import { mix } from 'ts-mixer'
 
-export class SLBaseCommand {
+export class BaseCommand {
 	/**
 	 * If this command will be registered only in test servers
 	 */
@@ -69,8 +69,8 @@ export class SLBaseCommand {
 	}
 }
 
-@mix(SLBaseCommand, SlashCommandBuilder)
-export class SLChatInputCommand extends SlashCommandBuilder {
+@mix(BaseCommand, SlashCommandBuilder)
+export class ChatInputCommand extends SlashCommandBuilder {
 	/**
 	 * What is going to happen when someone use this command
 	 */
@@ -107,7 +107,7 @@ export class SLChatInputCommand extends SlashCommandBuilder {
 
 		return super.addSubcommandGroup(
 			input
-		) as SlashCommandSubcommandsOnlyBuilder & SLSubCommandsOnly
+		) as SlashCommandSubcommandsOnlyBuilder & SubCommandsOnly
 	}
 
 	/**
@@ -125,12 +125,12 @@ export class SLChatInputCommand extends SlashCommandBuilder {
 		CommandManager.registerCommand(this)
 
 		return super.addSubcommand(input) as SlashCommandSubcommandsOnlyBuilder &
-			SLSubCommandsOnly
+			SubCommandsOnly
 	}
 }
 
-@mix(SLBaseCommand, ContextMenuCommandBuilder)
-export class SLMessageCommand {
+@mix(BaseCommand, ContextMenuCommandBuilder)
+export class MessageCommand {
 	/**
 	 * What is going to happen when someone use this command
 	 */
@@ -164,8 +164,8 @@ export class SLMessageCommand {
 	}
 }
 
-@mix(SLBaseCommand, ContextMenuCommandBuilder)
-export class SLUserCommand {
+@mix(BaseCommand, ContextMenuCommandBuilder)
+export class UserCommand {
 	/**
 	 * What is going to happen when someone use this command
 	 */
@@ -199,7 +199,7 @@ export class SLUserCommand {
 	}
 }
 
-export class SLSubCommand {
+export class SubCommand {
 	/**
 	 * The name of this sub-command
 	 */
@@ -257,11 +257,11 @@ export class SLSubCommand {
 	}
 }
 
-export interface SLSubCommandsOnly
-	extends SLBaseCommand,
-		Pick<SLChatInputCommand, 'onExecute'> {}
+export interface SubCommandsOnly
+	extends BaseCommand,
+		Pick<ChatInputCommand, 'onExecute'> {}
 
-export interface SLChatInputCommand extends SLBaseCommand, SlashCommandBuilder {
+export interface ChatInputCommand extends BaseCommand, SlashCommandBuilder {
 	/**
 	 * Adds a new subcommand group to this command
 	 *
@@ -273,7 +273,7 @@ export interface SLChatInputCommand extends SLBaseCommand, SlashCommandBuilder {
 			| ((
 					subcommandGroup: SlashCommandSubcommandGroupBuilder
 			  ) => SlashCommandSubcommandGroupBuilder)
-	): SlashCommandSubcommandsOnlyBuilder & SLSubCommandsOnly
+	): SlashCommandSubcommandsOnlyBuilder & SubCommandsOnly
 
 	/**
 	 * Adds a new subcommand to this command
@@ -286,15 +286,13 @@ export interface SLChatInputCommand extends SLBaseCommand, SlashCommandBuilder {
 			| ((
 					subcommandGroup: SlashCommandSubcommandBuilder
 			  ) => SlashCommandSubcommandBuilder)
-	): SlashCommandSubcommandsOnlyBuilder & SLSubCommandsOnly
+	): SlashCommandSubcommandsOnlyBuilder & SubCommandsOnly
 }
 
-export interface SLMessageCommand
-	extends SLBaseCommand,
+export interface MessageCommand
+	extends BaseCommand,
 		ContextMenuCommandBuilder {}
 
-export interface SLUserCommand
-	extends SLBaseCommand,
-		ContextMenuCommandBuilder {}
+export interface UserCommand extends BaseCommand, ContextMenuCommandBuilder {}
 
-export type SLCommand = SLChatInputCommand | SLMessageCommand | SLUserCommand
+export type SLCommand = ChatInputCommand | MessageCommand | UserCommand

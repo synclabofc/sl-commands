@@ -6,9 +6,10 @@ import {
 } from 'discord.js'
 
 import { CommandExecuteObject, CommandExecute, SLInteraction } from './types'
-import SLHandler, { SLCommand, SLSubCommand } from '.'
+import { SLCommand } from './structures';
+import SLHandler, { SubCommand } from '.'
 
-type SCollection = Collection<string, SLSubCommand>
+type SCollection = Collection<string, SubCommand>
 type CCollection = Collection<string, SLCommand>
 type OptRsvlr = CommandInteractionOptionResolver
 
