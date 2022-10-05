@@ -21,28 +21,28 @@ export class Logger {
 	 * @param {string} prefix - The [PREFIX]
 	 */
 	static create(hex: string, prefix: string) {
-		return chalk.white('[') + this.hex(hex)(prefix) + chalk.white(']')
+		return chalk.white('[') + Logger.hex(hex)(prefix) + chalk.white(']')
 	}
 
 	/**
 	 * @param {string[]} ...args - Anything you want to log with warn as prefix
 	 */
 	static warn(...args: any[]) {
-		log(this.create('#ffffcc', 'WARN'), ...args)
+		log(Logger.create('#ffffcc', 'WARN'), ...args)
 	}
 
 	/**
 	 * @param {string[]} ...args - Anything you want to log with error as prefix
 	 */
 	static error(...args: any[]) {
-		log(this.create('#f64747', 'ERROR'), ...args)
+		log(Logger.create('#f64747', 'ERROR'), ...args)
 	}
 
 	/**
 	 * @param {string[]} ...args - Anything you want to log with success as prefix
 	 */
 	static success(...args: any[]) {
-		log(this.create('#93faa5', 'SUCCESS'), ...args)
+		log(Logger.create('#93faa5', 'SUCCESS'), ...args)
 	}
 
 	/**
@@ -50,7 +50,7 @@ export class Logger {
 	 * @param {string} hex - The HEX code
 	 */
 	static custom(tag: string, hex: string, ...args: any[]) {
-		log(this.create(hex, tag), ...args)
+		log(Logger.create(hex, tag), ...args)
 	}
 
 	/**
@@ -58,6 +58,6 @@ export class Logger {
 	 * @param {string[]} ...args - Anything you want to log with the provided tag as prefix
 	 */
 	static tag(tag: string, ...args: any[]) {
-		log(this.create('#6bb9f0', tag), ...args)
+		log(Logger.create('#6bb9f0', tag), ...args)
 	}
 }
