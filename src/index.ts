@@ -70,12 +70,6 @@ export default class SLHandler extends (EventEmitter as new () => TypedEventEmit
 			useDefaultMessages,
 		} = options ?? {}
 
-		if (mongoUri) {
-			await new Mongo(this, mongoUri, dbOptions).connect()
-
-			this._mongoConnection = Mongo.getConnection()
-		}
-
 		if (testServersIds) {
 			if (typeof testServersIds == 'string') testServersIds = [testServersIds]
 			this._testServersIds = testServersIds
@@ -115,6 +109,12 @@ export default class SLHandler extends (EventEmitter as new () => TypedEventEmit
 		this._commandLoader = new CommandLoader(this, this._commandsDir)
 		this._featureLoader = new FeatureLoader(this, this._featuresDir)
 		this._eventLoader = new EventLoader(this, this._eventsDir)
+
+		if (mongoUri) {
+			await new Mongo(this, mongoUri, dbOptions).connect()
+
+			this._mongoConnection = Mongo.getConnection()
+		}
 
 		this._client.login(this._token).then(() => {
 			this.emit('handlerReady')
