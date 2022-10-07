@@ -11,6 +11,7 @@ import {
 import { HandlerEvents, HandlerOptions, SLLanguages } from './types'
 import Util, { Validators, Logger, Mongo } from './util'
 import TypedEventEmitter from 'typed-emitter'
+import lookForUpdates from './LookForUpdates'
 import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
 import { Client } from 'discord.js'
@@ -119,6 +120,8 @@ export default class SLHandler extends (EventEmitter as new () => TypedEventEmit
 		this._client.login(this._token).then(() => {
 			this.emit('handlerReady')
 		})
+
+		lookForUpdates()
 	}
 
 	/**
