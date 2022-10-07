@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import boxen from 'boxen'
 import fs from 'fs'
 
-export default async function lookForUpdates() {
+export async function lookForUpdates() {
 	const { version } = JSON.parse(
 		fs.readFileSync(__dirname + '/../package.json') as unknown as string
 	)

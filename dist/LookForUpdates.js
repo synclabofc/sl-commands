@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.lookForUpdates = void 0;
 const tslib_1 = require("tslib");
 const latest_version_1 = tslib_1.__importDefault(require("latest-version"));
 const semver_1 = tslib_1.__importDefault(require("semver"));
@@ -26,4 +27,4 @@ async function lookForUpdates() {
     }
     return;
 }
-exports.default = lookForUpdates;
+exports.lookForUpdates = lookForUpdates;

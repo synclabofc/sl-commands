@@ -1,1 +1,1 @@
-export default function lookForUpdates(): Promise<void>;
+export declare function lookForUpdates(): Promise<void>;

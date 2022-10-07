@@ -12,7 +12,7 @@ Object.defineProperty(exports, "Event", { enumerable: true, get: function () { r
 Object.defineProperty(exports, "SLEmbed", { enumerable: true, get: function () { return structures_1.SLEmbed; } });
 const util_1 = tslib_1.__importStar(require("./util"));
 exports.Util = util_1.default;
-const LookForUpdates_1 = tslib_1.__importDefault(require("./LookForUpdates"));
+const LookForUpdates_1 = require("./LookForUpdates");
 const events_1 = require("events");
 const discord_js_1 = require("discord.js");
 const MessageHandler_1 = tslib_1.__importDefault(require("./MessageHandler"));
@@ -92,10 +92,10 @@ class SLHandler extends events_1.EventEmitter {
         }
         this._client.login(this._token).then(() => {
             this.emit('handlerReady');
-            if (this._showWarns) {
-                (0, LookForUpdates_1.default)();
-            }
         });
+        if (this._showWarns) {
+            (0, LookForUpdates_1.lookForUpdates)();
+        }
     }
     /**
      * Add bot developers to the handler (you can add it as a property when setting up the handler instead)
