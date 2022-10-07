@@ -88,12 +88,16 @@ class SLHandler extends events_1.EventEmitter {
         this._eventLoader = new EventLoader_1.default(this, this._eventsDir);
         if (mongoUri) {
             await new util_1.Mongo(this, mongoUri, dbOptions).connect();
+            console.log('mongo');
             this._mongoConnection = util_1.Mongo.getConnection();
         }
         this._client.login(this._token).then(() => {
+            console.log('login');
             this.emit('handlerReady');
         });
+        console.log('after login');
         if (this._showWarns) {
+            console.log('look');
             (0, LookForUpdates_1.lookForUpdates)();
         }
     }
