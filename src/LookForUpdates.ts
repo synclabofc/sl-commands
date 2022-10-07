@@ -5,14 +5,11 @@ import boxen from 'boxen'
 import fs from 'fs'
 
 export default async function lookForUpdates() {
-	const { dependencies } = JSON.parse(
+	const { version } = JSON.parse(
 		fs.readFileSync(__dirname + '/../package.json') as unknown as string
 	)
 
-	const currentVersion = dependencies['sl-commands'].replace(
-		/[^0-9.]/g,
-		''
-	) as string
+	const currentVersion = version.replace(/[^0-9.]/g, '') as string
 	const latestVersion = await latestPackage('sl-commands')
 
 	const updateAvailable = SemVer.lt(currentVersion, latestVersion)
@@ -28,7 +25,7 @@ export default async function lookForUpdates() {
 		console.log(
 			boxen(`${msg.updateAvailable}\n${msg.runUpdate}`, {
 				borderColor: 'cyanBright',
-        title: 'sl-commands',
+				title: 'sl-commands',
 				align: 'center',
 				padding: 1,
 				margin: 1,
