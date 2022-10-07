@@ -119,11 +119,11 @@ export default class SLHandler extends (EventEmitter as new () => TypedEventEmit
 
 		this._client.login(this._token).then(() => {
 			this.emit('handlerReady')
+			
+			if (this._showWarns) {
+				lookForUpdates()
+			}
 		})
-
-		if (this._showWarns) {
-			lookForUpdates()
-		}
 	}
 
 	/**
