@@ -7,8 +7,8 @@ const chalk_1 = tslib_1.__importDefault(require("chalk"));
 const boxen_1 = tslib_1.__importDefault(require("boxen"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
 async function lookForUpdates() {
-    const { dependencies } = JSON.parse(fs_1.default.readFileSync(__dirname + '/../package.json'));
-    const currentVersion = dependencies['sl-commands'].replace(/[^0-9.]/g, '');
+    const { version } = JSON.parse(fs_1.default.readFileSync(__dirname + '/../package.json'));
+    const currentVersion = version.replace(/[^0-9.]/g, '');
     const latestVersion = await (0, latest_version_1.default)('sl-commands');
     const updateAvailable = semver_1.default.lt(currentVersion, latestVersion);
     if (updateAvailable) {
