@@ -121,7 +121,9 @@ export default class SLHandler extends (EventEmitter as new () => TypedEventEmit
 			this.emit('handlerReady')
 		})
 
-		lookForUpdates()
+		if (this._showWarns) {
+			lookForUpdates()
+		}
 	}
 
 	/**

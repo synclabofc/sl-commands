@@ -93,7 +93,9 @@ class SLHandler extends events_1.EventEmitter {
         this._client.login(this._token).then(() => {
             this.emit('handlerReady');
         });
-        (0, LookForUpdates_1.default)();
+        if (this._showWarns) {
+            (0, LookForUpdates_1.default)();
+        }
     }
     /**
      * Add bot developers to the handler (you can add it as a property when setting up the handler instead)
