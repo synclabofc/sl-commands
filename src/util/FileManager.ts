@@ -22,8 +22,8 @@ export class FileManager {
 		return resFiles
 	}
 
-	static async import(path: string) {
-		let file = await import(path)
+	static import(path: string) {
+		let file = require(path)
 		return file?.default ? file.default : file
 	}
 }
