@@ -79,7 +79,6 @@ export type HandlerEvents = {
 		error: Error,
 		interaction: SLInteraction | undefined
 	) => any
-	handlerReady: () => any
 }
 
 export interface HandlerOptions {

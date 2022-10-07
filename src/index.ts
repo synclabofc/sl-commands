@@ -117,9 +117,7 @@ export default class SLHandler extends (EventEmitter as new () => TypedEventEmit
 			this._mongoConnection = Mongo.getConnection()
 		}
 
-		this._client.login(this._token).then(() => {
-			this.emit('handlerReady')
-		})
+		await this._client.login(this._token)
 
 		if (this._showWarns) {
 			lookForUpdates()

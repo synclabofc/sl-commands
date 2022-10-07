@@ -28,7 +28,7 @@ class FeatureHandler {
         }
         const { initFunctions, timedFunctions } = FeatureManager_1.default;
         const context = { handler, client };
-        handler.on('handlerReady', () => {
+        client.on('ready', () => {
             for (const initFunction of initFunctions) {
                 initFunction(context);
             }

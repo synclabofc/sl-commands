@@ -51,7 +51,6 @@ export declare type HandlerEvents = {
     databaseConnected: (connection: Connection, state: string) => any;
     commandDevsOnly: (interaction: SLInteraction) => any;
     commandException: (commandName: string, error: Error, interaction: SLInteraction | undefined) => any;
-    handlerReady: () => any;
 };
 export interface HandlerOptions {
     /** The custom messages' json path */
