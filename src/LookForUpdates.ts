@@ -22,14 +22,16 @@ export default async function lookForUpdates() {
 			runUpdate: `Run ${chalk.cyan(`npm i sl-commands@latest`)} to update`,
 		}
 
-		// console.log(
-		// 	boxen(`${msg.updateAvailable}\n${msg.runUpdate}`, {
-		// 		borderColor: 'cyanBright',
-		// 		title: 'sl-commands',
-		// 		align: 'center',
-		// 		padding: 1,
-		// 		margin: 1,
-		// 	})
-		// )
+		console.log(
+			boxen(`${msg.updateAvailable}\n${msg.runUpdate}`, {
+				borderColor: 'cyanBright',
+				title: 'sl-commands',
+				align: 'center',
+				padding: 1,
+				margin: 1,
+			})
+		)
 	}
+
+	return
 }
