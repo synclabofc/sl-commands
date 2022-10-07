@@ -5,7 +5,7 @@
 		"outDir": "dist",
 		"rootDir": "src",
 		"moduleResolution": "Node",
-		"allowSyntheticDefaultImports": true,
+		// "allowSyntheticDefaultImports": true,
 		"experimentalDecorators": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
