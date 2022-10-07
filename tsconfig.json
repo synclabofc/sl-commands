@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-		"target": "esnext",
+		"module": "CommonJS",
+		"target": "ESNext",
 		"outDir": "dist",
 		"rootDir": "src",
 		"moduleResolution": "Node",
@@ -15,6 +15,6 @@
 		"declaration": true,
 		"strict": true
 	},
-	"include": ["src", "test/index.test.ts"],
+	"include": ["src"],
 	"exclude": ["test"]
 }
