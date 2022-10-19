@@ -1,6 +1,6 @@
 {
 	"name": "sl-commands",
-	"version": "2.1.6",
+	"version": "2.1.7",
 	"description": "A simple handler for discord.js v14.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
