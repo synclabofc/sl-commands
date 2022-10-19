@@ -1,5 +1,5 @@
 import { ChatInputCommand, MessageCommand, UserCommand, SubCommand, Feature, Event, SLEmbed } from './structures';
-import { HandlerEvents, HandlerOptions } from './types';
+import { HandlerEvents, HandlerOptions, SLLanguages } from './types';
 import Util from './util';
 import TypedEventEmitter from 'typed-emitter';
 import { Connection } from 'mongoose';
@@ -71,7 +71,7 @@ export default class SLHandler extends SLHandler_base {
     /** If showWarns is enabled */
     get showWarns(): boolean;
     /** The default language for bot messages */
-    get language(): "en-us" | "pt-br";
+    get language(): SLLanguages;
     /** The DiscordJS client */
     get client(): Client<boolean>;
 }

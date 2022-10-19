@@ -1,6 +1,5 @@
-import { MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, CommandInteractionOptionResolver, ChatInputCommandInteraction, TextBasedChannel, ClientOptions, GuildMember, Message, Client, Locale, Guild, User } from 'discord.js';
+import { MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, CommandInteractionOptionResolver, ChatInputCommandInteraction, TextBasedChannel, ClientOptions, GuildMember, Message, Client, Locale, Guild, User, PermissionsString } from 'discord.js';
 import { Connection, ConnectOptions } from 'mongoose';
-import permissions from './permissions.json';
 import SLHandler from '.';
 export declare type CommandType = keyof CommandTypes;
 interface CommandTypes {
@@ -45,8 +44,8 @@ export declare type CommandExecuteObject<T extends CommandType = CommandType> = 
     user: User;
 };
 export declare type CommandExecute<T extends CommandType = CommandType> = (object: CommandExecuteObject<T>) => any;
-export declare type SLPermission = keyof typeof permissions['en-us'];
-export declare type SLLanguages = keyof typeof permissions;
+export declare type SLPermission = PermissionsString;
+export declare type SLLanguages = 'pt-br' | 'en-us';
 export declare type HandlerEvents = {
     databaseConnected: (connection: Connection, state: string) => any;
     commandDevsOnly: (interaction: SLInteraction) => any;
