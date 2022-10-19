@@ -11,6 +11,7 @@ import {
 	Locale,
 	Guild,
 	User,
+	PermissionsString,
 } from 'discord.js'
 
 import { Connection, ConnectOptions } from 'mongoose'
@@ -67,9 +68,9 @@ export type CommandExecute<T extends CommandType = CommandType> = (
 	object: CommandExecuteObject<T>
 ) => any
 
-export type SLPermission = keyof typeof permissions['en-us']
+export type SLPermission = PermissionsString
 
-export type SLLanguages = keyof typeof permissions
+export type SLLanguages = 'pt-br' | 'en-us'
 
 export type HandlerEvents = {
 	databaseConnected: (connection: Connection, state: string) => any
