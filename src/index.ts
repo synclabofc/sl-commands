@@ -1,25 +1,25 @@
 import {
 	ChatInputCommand,
-	MessageCommand,
-	UserCommand,
-	SubCommand,
-	Feature,
 	Event,
+	Feature,
+	MessageCommand,
 	SLEmbed,
+	SubCommand,
+	UserCommand,
 } from './structures'
 
-import { HandlerEvents, HandlerOptions, SLLanguages } from './types'
-import Util, { Validators, Logger, Mongo } from './util'
-import { lookForUpdates } from './LookForUpdates'
-import TypedEventEmitter from 'typed-emitter'
+import { Client } from 'discord.js'
 import { EventEmitter } from 'events'
 import { Connection } from 'mongoose'
-import { Client } from 'discord.js'
+import TypedEventEmitter from 'typed-emitter'
+import lookForUpdates from './LookForUpdates'
+import { HandlerEvents, HandlerOptions, SLLanguages } from './types'
+import Util, { Logger, Mongo, Validators } from './util'
 
-import MessageHandler from './MessageHandler'
 import CommandLoader from './loaders/CommandLoader'
-import FeatureLoader from './loaders/FeatureLoader'
 import EventLoader from './loaders/EventLoader'
+import FeatureLoader from './loaders/FeatureLoader'
+import MessageHandler from './MessageHandler'
 
 export default class SLHandler extends (EventEmitter as new () => TypedEventEmitter<HandlerEvents>) {
 	private _client: Client

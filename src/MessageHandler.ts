@@ -24,16 +24,11 @@ class MessageHandler {
 		const message =
 			this.messages?.[index][language] || this.defaultMessages[index][language]
 
-		return message.replaceAll(
+		return message.replace(
 			/\{\{|\}\}|\{([^}]+)\}/g,
-			(m: string, name: string): string => {
-				if (m === '{{') return '{'
-				if (m === '}}') return '}'
-
-				return keys?.[name].toString() ?? m
-			}
+			(_, name) => keys?.[name].toString() || _
 		)
 	}
 }
 
-export = MessageHandler
+export default MessageHandler

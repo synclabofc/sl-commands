@@ -1,13 +1,13 @@
 import {
+	Collection,
 	CommandInteractionOptionResolver,
 	GuildMember,
-	Collection,
 	Message,
 } from 'discord.js'
 
-import { CommandExecuteObject, CommandExecute, SLInteraction } from './types'
-import { SLCommand } from './structures';
 import SLHandler, { SubCommand } from '.'
+import { SLCommand } from './structures'
+import { CommandExecute, CommandExecuteObject, SLInteraction } from './types'
 
 type SCollection = Collection<string, SubCommand>
 type CCollection = Collection<string, SLCommand>
@@ -15,92 +15,105 @@ type OptRsvlr = CommandInteractionOptionResolver
 
 class CommandListener {
 	constructor(
-		public handler: SLHandler,
-		commands: CCollection,
-		subcommands: SCollection
+		private readonly handler: SLHandler,
+		private readonly commands: CCollection,
+		private readonly subcommands: SCollection
 	) {
-		handler.client.on('interactionCreate', async raw => {
-			if (!raw.isChatInputCommand() && !raw.isContextMenuCommand()) return
+		this.handler.client.on('interactionCreate', int =>
+			this.onInteractionCreate(<SLInteraction>int)
+		)
+	}
 
-			const command = commands.get(raw.commandName)
-			const interaction = raw as SLInteraction
+	private async onInteractionCreate(interaction: SLInteraction) {
+		if (
+			!interaction.isChatInputCommand() &&
+			!interaction.isContextMenuCommand()
+		) {
+			return
+		}
 
-			if (!command) return
+		const command = this.commands.get(interaction.commandName)
 
-			const { member, guild, user, channel, locale, options } = interaction
+		if (!command) {
+			return
+		}
 
-			let check = await this.isAvailable(interaction, command)
+		const { member, guild, user, channel, locale, options } = interaction
 
-			if (check) {
-				if (check !== true) {
-					interaction.reply(check)
-				}
+		let check = await this.isAvailable(interaction, command)
 
-				return
+		if (check) {
+			if (check !== true) {
+				interaction.reply(check)
 			}
 
-			let execute = command.executeFunction as CommandExecute
+			return
+		}
 
-			let cbObject: CommandExecuteObject = {
-				client: handler.client,
-				options: undefined!,
-				channel: undefined!,
-				guild: guild!,
-				interaction,
-				handler,
-				locale,
-				member,
-				user,
-			}
+		let execute = <CommandExecute>command.executeFunction
 
-			if (interaction.isChatInputCommand()) {
-				const { commandName } = interaction
+		let cbObject: CommandExecuteObject = {
+			client: this.handler.client,
+			options: undefined!,
+			channel: undefined!,
+			guild: guild!,
+			interaction,
+			handler: this.handler,
+			locale,
+			member,
+			user,
+		}
 
-				const subCommand = subcommands.find(s =>
-					options.data.some(
-						({ name }) => s.name === name && s.reference === commandName
-					)
+		if (interaction.isChatInputCommand()) {
+			const { commandName } = interaction
+
+			const subCommand = this.subcommands.find(s =>
+				options.data.some(
+					({ name }) => s.name === name && s.reference === commandName
 				)
+			)
 
-				if (subCommand) {
-					execute = subCommand.executeFunction as CommandExecute
+			if (subCommand) {
+				execute = <CommandExecute>subCommand.executeFunction
 
-					cbObject = Object.assign(cbObject, {
-						options: options as OptRsvlr,
-						channel: channel!,
-					})
-				} else {
-					cbObject = Object.assign(cbObject, {
-						options: options as OptRsvlr,
-						channel: channel!,
-					})
-				}
-			} else if (interaction.isUserContextMenuCommand()) {
-				cbObject = Object.assign(cbObject, {
-					target: interaction.targetMember as GuildMember,
-				})
-			} else if (interaction.isMessageContextMenuCommand()) {
-				cbObject = Object.assign(cbObject, {
-					target: interaction.targetMessage as Message,
+				cbObject = {
+					...cbObject,
+					options: options as OptRsvlr,
 					channel: channel!,
-				})
-			}
-
-			try {
-				await execute(cbObject)
-			} catch (err) {
-				if (!(err instanceof Error)) {
-					err = new Error(String(err))
 				}
-
-				handler.emit(
-					'commandException',
-					command.name ?? 'unknown',
-					err as Error,
-					interaction
-				)
+			} else {
+				cbObject = {
+					...cbObject,
+					options: options as OptRsvlr,
+					channel: channel!,
+				}
 			}
-		})
+		} else if (interaction.isUserContextMenuCommand()) {
+			cbObject = {
+				...cbObject,
+				target: interaction.targetMember as GuildMember,
+			}
+		} else if (interaction.isMessageContextMenuCommand()) {
+			cbObject = Object.assign(cbObject, {
+				target: interaction.targetMessage as Message,
+				channel: channel!,
+			})
+		}
+
+		try {
+			await execute(cbObject)
+		} catch (err) {
+			if (!(err instanceof Error)) {
+				err = new Error(String(err))
+			}
+
+			this.handler.emit(
+				'commandException',
+				command.name ?? 'unknown',
+				err as Error,
+				interaction
+			)
+		}
 	}
 
 	private async isAvailable(
