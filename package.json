@@ -1,54 +1,56 @@
 {
-	"name": "sl-commands",
-	"version": "2.1.7",
-	"description": "A simple handler for discord.js v14.",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"latest": "pnpm build && pnpm publish && git push",
-		"beta": "pnpm version patch && pnpm build && pnpm publish --tag beta && git push",
-		"test": "prettier -w test/**/*.ts && cls && ts-node-dev test/index.test.ts",
-		"build": "tsc && cls"
-	},
-	"keywords": [
-		"discord",
-		"bot",
-		"context",
-		"command",
-		"event",
-		"handler",
-		"typescript",
-		"class"
-	],
-	"author": "bluey#0012",
-	"license": "MIT",
-	"dependencies": {
-		"@sapphire/shapeshift": "^3.5.1",
-		"boxen": "5.x.x",
-		"chalk": "4.1.2",
-		"discord.js": "^14.2.0",
-		"dotenv": "^16.0.1",
-		"latest-version": "5.x",
-		"mongoose": "^6.5.2",
-		"semver": "^7.3.8",
-		"ts-mixer": "^6.0.1",
-		"tslib": "^2.4.0",
-		"typed-emitter": "^2.1.0"
-	},
-	"devDependencies": {
-		"@types/node": "^18.7.6",
-		"@types/semver": "^7.3.12",
-		"prettier": "^2.7.1",
-		"ts-node": "^10.9.1",
-		"ts-node-dev": "^2.0.0",
-		"typescript": "^4.7.4"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/bluee-js/sl-commands.git"
-	},
-	"bugs": {
-		"url": "https://github.com/bluee-js/sl-commands/issues"
-	},
-	"homepage": "https://github.com/bluee-js/sl-commands#readme"
+  "name": "sl-commands",
+  "version": "2.1.7",
+  "description": "A simple handler for discord.js v14.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "latest": "pnpm build && pnpm publish && git push",
+    "beta": "pnpm version patch && pnpm build && pnpm publish --tag beta && git push",
+    "test": "prettier -w test/**/*.ts && cls && ts-node-dev test/index.test.ts",
+    "build": "tsc && cls",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "context",
+    "command",
+    "event",
+    "handler",
+    "typescript",
+    "class"
+  ],
+  "author": "bluey#0012",
+  "license": "MIT",
+  "dependencies": {
+    "@sapphire/shapeshift": "^3.5.1",
+    "boxen": "5.x.x",
+    "chalk": "4.1.2",
+    "discord.js": "^14.2.0",
+    "dotenv": "^16.0.1",
+    "latest-version": "5.x",
+    "mongoose": "^6.5.2",
+    "semver": "^7.3.8",
+    "ts-mixer": "^6.0.1",
+    "tslib": "^2.4.0",
+    "typed-emitter": "^2.1.0"
+  },
+  "devDependencies": {
+    "@synclab/eslint-config": "^1.0.1",
+    "@types/node": "^18.7.6",
+    "@types/semver": "^7.3.12",
+    "eslint": "^8.43.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.7.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluee-js/sl-commands.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bluee-js/sl-commands/issues"
+  },
+  "homepage": "https://github.com/bluee-js/sl-commands#readme"
 }

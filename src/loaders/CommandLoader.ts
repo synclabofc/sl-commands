@@ -1,88 +1,88 @@
-import { Collection, PermissionFlagsBits } from 'discord.js'
-import { SubCommand, SLCommand } from '../structures'
-import CommandManager from '../managers/CommandManager'
-import CommandListener from '../CommandListener'
-import { FileManager, Logger } from '../util'
-import { existsSync } from 'fs'
-import SLHandler from '..'
+import { Collection, PermissionFlagsBits } from 'discord.js';
+import { existsSync } from 'fs';
+import SLHandler from '..';
+import CommandListener from '../CommandListener';
+import CommandManager from '../managers/CommandManager';
+import { SLCommand, SubCommand } from '../structures';
+import { FileManager, Logger } from '../util';
 
 class CommandHandler {
-	commands = new Collection<string, SLCommand>()
-	subcommands = new Collection<string, SubCommand>()
+  commands = new Collection<string, SLCommand>();
+  subcommands = new Collection<string, SubCommand>();
 
-	constructor(handler: SLHandler, dir: string) {
-		if (!dir) return
+  constructor(handler: SLHandler, dir: string) {
+    if (!dir) return;
 
-		if (!existsSync(dir)) {
-			Logger.error(`The directory '${dir}' does not exists.`)
-			return
-		}
+    if (!existsSync(dir)) {
+      Logger.error(`The directory '${dir}' does not exists.`);
+      return;
+    }
 
-		try {
-			this.load(handler, dir)
-			new CommandListener(handler, this.commands, this.subcommands)
-		} catch (e) {
-			Logger.error(`An error occurred while loading commands.\n`, e)
-		}
-	}
+    try {
+      new CommandListener(handler, this.commands, this.subcommands); // eslint-disable-line no-new
+      this.load(handler, dir);
+    } catch (e) {
+      Logger.error(`An error occurred while loading commands.\n`, e);
+    }
+  }
 
-	private async load(handler: SLHandler, dir: string) {
-		const commandFiles = FileManager.getAllFiles(dir)
+  private async load(handler: SLHandler, dir: string) {
+    const commandFiles = FileManager.getAllFiles(dir);
 
-		for (const file of commandFiles) {
-			FileManager.import(file)
-		}
+    for (const file of commandFiles) {
+      FileManager.import(file);
+    }
 
-		const { commands, subcommands } = CommandManager
+    const { commands, subcommands } = CommandManager;
 
-		this.commands = commands.mapValues(command => {
-			if (
-				!command.executeFunction &&
-				!subcommands.find(s => s.reference === command.name)
-			) {
-				throw new Error(
-					'SLCommands > Commands without a subCommand must have an execute function.'
-				)
-			}
+    this.commands = commands.mapValues((command) => {
+      if (
+        !command.executeFunction &&
+        !subcommands.find((s) => s.reference === command.name)
+      ) {
+        throw new Error(
+          'SLCommands > Commands without a subCommand must have an execute function.',
+        );
+      }
 
-			if (command.testOnly === undefined) {
-				command.setTestOnly(handler.testOnly)
-			}
+      if (command.testOnly === undefined) {
+        command.setTestOnly(handler.testOnly);
+      }
 
-			if (command.permissions.length) {
-				command
-					.setDMPermission(false)
-					.setDefaultMemberPermissions(
-						BigInt(
-							command.permissions
-								.map(Permission => PermissionFlagsBits[Permission])
-								.reduce((a, b) => a | b)
-						)
-					)
-			}
+      if (command.permissions.length) {
+        command
+          .setDMPermission(false)
+          .setDefaultMemberPermissions(
+            BigInt(
+              command.permissions
+                .map((Permission) => PermissionFlagsBits[Permission])
+                .reduce((a, b) => a | b),
+            ),
+          );
+      }
 
-			return command
-		})
+      return command;
+    });
 
-		this.subcommands = subcommands
+    this.subcommands = subcommands;
 
-		Logger.tag('COMMANDS', `Loaded ${commandFiles.length} command files.`)
+    Logger.tag('COMMANDS', `Loaded ${commandFiles.length} command files.`);
 
-		handler.client.once('ready', () => this.registerCommands(handler))
-	}
+    handler.client.once('ready', () => this.registerCommands(handler));
+  }
 
-	private async registerCommands(handler: SLHandler) {
-		const register = this.commands.toJSON()
+  private async registerCommands(handler: SLHandler) {
+    const register = this.commands.toJSON();
 
-		const global = register.filter(c => !c.testOnly),
-			test = register.filter(c => c.testOnly)
+    const global = register.filter((c) => !c.testOnly);
+    const test = register.filter((c) => c.testOnly);
 
-		handler.client.application?.commands.set(global)
+    handler.client.application?.commands.set(global);
 
-		for (const id of handler.testServersIds) {
-			;(await handler.client.guilds.fetch(id))?.commands.set(test)
-		}
-	}
+    for (const id of handler.testServersIds) {
+      (await handler.client.guilds.fetch(id))?.commands.set(test);
+    }
+  }
 }
 
-export = CommandHandler
+export = CommandHandler;

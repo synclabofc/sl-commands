@@ -1,6 +1,6 @@
 {
-	"DevsOnly": {
-		"pt-br": "Este comando apenas pode ser utilizado pelos meus desenvolvedores.",
-		"en-us": "This command can only be used by my developers."
-	}
+  "DevsOnly": {
+    "pt-br": "Este comando apenas pode ser utilizado pelos meus desenvolvedores.",
+    "en-us": "This command can only be used by my developers."
+  }
 }

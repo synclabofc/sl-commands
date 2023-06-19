@@ -1,13 +1,13 @@
-import { Event } from '../structures'
+import { Event } from '../structures';
 
 class EventManager {
-	readonly events: Event[] = []
+  readonly events: Event[] = [];
 
-	registerEvent(event: Event) {
-		if (event instanceof Event) {
-			this.events.push(event)
-		}
-	}
+  registerEvent(event: Event) {
+    if (event instanceof Event) {
+      this.events.push(event);
+    }
+  }
 }
 
-export = new EventManager()
+export = new EventManager();
